@@ -20,6 +20,12 @@ def get_pose_estimation_video(video_path):
     # Create the output frames folder
     os.makedirs(output_folder, exist_ok=True)
 
+    # A dictory to store landmarks of all frames
+    landmarks = {}
+
+    # A dictionary to store angles between landmarks
+    angles = {}
+
     #Drawing Pose Landmarks and Extracting Coordinates of each landmark
     with mp_pose.Pose(
         min_detection_confidence=0.5,
@@ -48,9 +54,9 @@ def get_pose_estimation_video(video_path):
                     landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style()
                 )
 
-                # A dictory to store landmarks of all frames
-                landmarks = {}
-
+                # A list to store angles for each frame
+                frame_angles = []
+                    
                 # A dictionary to store landmarks for each frame
                 frame_landmarks = {}
                                 
@@ -63,16 +69,45 @@ def get_pose_estimation_video(video_path):
                     frame_landmarks[idx] = landmark_tuple
 
                     
-                landmark12 = frame_landmarks[12]
-                landmark14 = frame_landmarks[14]
-                landmark24 = frame_landmarks[24]
+                landmark_left_shoulder = frame_landmarks[11]
+                landmark_right_shoulder = frame_landmarks[12]
+                landmark_left_elbow = frame_landmarks[13]
+                landmark_right_elbow = frame_landmarks[14]
+                landmark_left_wrist = frame_landmarks[15]
+                landmark_right_wrist = frame_landmarks[16]
+                landmark_left_pinky = frame_landmarks[17]
+                landmark_right_pinky = frame_landmarks[18]
+                landmark_left_thumb = frame_landmarks[21]
+                landmark_right_thumb = frame_landmarks[22]
+                landmark_left_hip = frame_landmarks[23]
+                landmark_right_hip = frame_landmarks[24]
+                landmark_left_knee = frame_landmarks[25]
+                landmark_right_knee = frame_landmarks[26]
+                landmark_left_ankle = frame_landmarks[27]
+                landmark_right_ankle = frame_landmarks[28]
+                landmark_left_foot_index = frame_landmarks[31]
+                landmark_right_foot_index = frame_landmarks[32]
 
-                # Get angle between the two lines i.e., 12 14 and 14 24 with a common point 14. 
-                print(get_angle(landmark12, landmark14, landmark24))
+                # Getting angle between the two lines
+                angle0 = get_angle(landmark_right_elbow, landmark_right_shoulder, landmark_right_hip)
+                angle1 = get_angle(landmark_left_elbow, landmark_left_shoulder, landmark_left_hip)
+                angle2 = get_angle(landmark_right_shoulder, landmark_right_hip, landmark_right_knee)
+                angle3 = get_angle(landmark_left_shoulder, landmark_left_hip, landmark_left_knee)
+                angle4 = get_angle(landmark_right_hip, landmark_right_knee, landmark_right_ankle)
+                angle5 = get_angle(landmark_left_hip, landmark_left_knee, landmark_left_ankle)
+                angle6 = get_angle(landmark_right_wrist, landmark_right_elbow, landmark_right_shoulder)
+                angle7 = get_angle(landmark_left_wrist, landmark_left_elbow, landmark_left_shoulder)
+                angle8 = get_angle(landmark_right_pinky, landmark_right_wrist, landmark_right_thumb)
+                angle9 = get_angle(landmark_left_pinky, landmark_left_wrist, landmark_left_thumb)
+                angle10 = get_angle(landmark_right_knee, landmark_right_ankle, landmark_right_foot_index)
+                angle11 = get_angle(landmark_left_knee, landmark_left_ankle, landmark_left_foot_index)
+
+                # Adding angles to the list
+                frame_angles.extend([angle0, angle1, angle2, angle3, angle4, angle5, angle6, angle7, angle8, angle9, angle10, angle11])
+
+                angles[frame_count] = frame_angles
 
                 landmarks[frame_count] = frame_landmarks
-
-                # print(landmarks)
 
                 # Save combined image as frame
                 frame_path = os.path.join(output_folder, f"frame_{frame_count:05d}.jpg")
@@ -99,3 +134,5 @@ def get_pose_estimation_video(video_path):
     out.release()
     cap.release()
     print("Video saved successfully!")
+
+    return angles

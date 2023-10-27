@@ -9,8 +9,6 @@ def get_angle(point1, point2, point3):
     denominator = (point2[0] - point1[0]) * (point1[0] - point3[0]) + \
                 (point2[1] - point1[1]) * (point1[1] - point3[1])
 
-    print(str(numerator) + " " + str(denominator))
-
     try:
         ang = math.atan(numerator/denominator)
 
