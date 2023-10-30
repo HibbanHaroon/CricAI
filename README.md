@@ -30,10 +30,10 @@ Clone the project
   git clone https://github.com/enGenAIr/CricAI.git
 ```
 
-Go to the project directory
+Go to the posture-comparison branch
 
 ```
-  cd CricAI
+  git checkout posture-comparison
 ```
 
 Install dependencies
