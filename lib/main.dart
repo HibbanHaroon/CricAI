@@ -1,3 +1,5 @@
+import 'dart:developer' as devtools show log;
+import 'package:cricai/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cricai/constants/routes.dart';
 import 'package:cricai/views/new_password_view.dart';
@@ -43,6 +45,31 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const LoginView();
+    return FutureBuilder(
+      future: AuthService.firebase().initialize(),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.done:
+            final user = AuthService.firebase().currentUser;
+            if (user != null) {
+              if (user.isEmailVerified) {
+                //user is present and account is verified
+                devtools.log('You are a verified user.');
+                return const HomeView();
+              } else {
+                //user is present but email is not verified.
+                devtools.log('You need to verify your email first.');
+                return const VerificationCodeView();
+              }
+            } else {
+              //user is not present
+              return const LoginView();
+            }
+          default:
+            //Instead of writing Loading
+            return const CircularProgressIndicator();
+        }
+      },
+    );
   }
 }

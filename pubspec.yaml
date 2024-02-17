@@ -37,6 +37,10 @@ dependencies:
   font_awesome_flutter: ^10.7.0
   pin_code_fields: ^8.0.1
   awesome_snackbar_content: ^0.1.3
+  firebase_core: ^2.25.4
+  firebase_auth: ^4.17.4
+  cloud_firestore: ^4.15.4
+  firebase_analytics: ^10.8.5
 
 dev_dependencies:
   flutter_test:

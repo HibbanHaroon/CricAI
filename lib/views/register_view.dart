@@ -1,4 +1,8 @@
+import 'dart:developer' as devtools show log;
 import 'package:cricai/constants/colors.dart';
+import 'package:cricai/services/auth/auth_exceptions.dart';
+import 'package:cricai/services/auth/auth_service.dart';
+import 'package:cricai/utilities/snackbar/error_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:cricai/constants/routes.dart';
 
@@ -209,7 +213,44 @@ class _RegisterViewState extends State<RegisterView> {
                       padding: const EdgeInsets.only(
                           top: 20.0, left: 8.0, right: 8.0, bottom: 12.0),
                       child: ElevatedButton(
-                        onPressed: () async {},
+                        onPressed: () async {
+                          final email = _email.text;
+                          final password = _password.text;
+                          try {
+                            await AuthService.firebase().createUser(
+                              email: email,
+                              password: password,
+                            );
+                            //sending the email for the user beforehand so the user only has to verify it
+                            await AuthService.firebase()
+                                .sendEmailVerification();
+                            Navigator.of(context)
+                                .pushNamed(verificationCodeRoute);
+                          } on EmailAlreadyInUseAuthException {
+                            devtools.log('Email already in use');
+                            showErrorSnackbar(
+                              context,
+                              'Email already in use',
+                            );
+                          } on WeakPasswordAuthException {
+                            devtools.log('Weak Password');
+                            showErrorSnackbar(
+                              context,
+                              'Weak Password',
+                            );
+                          } on InvalidEmailAuthException {
+                            showErrorSnackbar(
+                              context,
+                              'Invalid email entered',
+                            );
+                          } on GenericAuthException {
+                            devtools.log('Failed to Register.');
+                            showErrorSnackbar(
+                              context,
+                              'Failed to Register.',
+                            );
+                          }
+                        },
                         style: TextButton.styleFrom(
                           fixedSize: const Size(398.0, 60.0),
                           backgroundColor: AppColors.primaryColor,
