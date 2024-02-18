@@ -2,7 +2,6 @@ import 'dart:developer' as devtools show log;
 import 'package:cricai/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cricai/constants/routes.dart';
-import 'package:cricai/views/new_password_view.dart';
 import 'package:cricai/views/verify_email_view.dart';
 import 'package:cricai/views/forgot_password_view.dart';
 import 'package:cricai/views/home_view.dart';
@@ -32,7 +31,6 @@ class MyApp extends StatelessWidget {
         loginRoute: (context) => const LoginView(),
         forgotPasswordRoute: (context) => const ForgotPasswordView(),
         verifyEmailRoute: (context) => const VerifyEmailView(),
-        newPasswordRoute: (context) => const NewPasswordView(),
         registerRoute: (context) => const RegisterView(),
         homeRoute: (context) => const HomeView(),
       },

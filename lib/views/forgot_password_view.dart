@@ -1,5 +1,8 @@
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'dart:developer' as devtools show log;
 import 'package:cricai/constants/colors.dart';
+import 'package:cricai/services/auth/auth_exceptions.dart';
+import 'package:cricai/services/auth/auth_service.dart';
+import 'package:cricai/utilities/snackbar/error_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cricai/constants/routes.dart';
@@ -12,7 +15,6 @@ class ForgotPasswordView extends StatefulWidget {
 }
 
 class _ForgotPasswordViewState extends State<ForgotPasswordView> {
-  String email = "mike@gmail.com";
   late final TextEditingController _email;
 
   @override
@@ -62,7 +64,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
               padding: EdgeInsets.only(
                   top: 10.0, left: 30.0, right: 30.0, bottom: 30.0),
               child: Text(
-                "Provide your account's email for which you want to reset your password!",
+                "Provide your account's email and we will send you a password reset link!",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppColors.darkTextColor,
@@ -114,27 +116,32 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
               ),
               child: ElevatedButton(
                 onPressed: () async {
-                  if (email == _email.text) {
-                    Navigator.of(context).pushNamed(
-                      verifyEmailRoute,
+                  final email = _email.text.trim();
+                  try {
+                    await AuthService.firebase().passwordReset(
+                      email: email,
                     );
-                  } else {
-                    final snackBar = SnackBar(
-                      elevation: 0,
-                      behavior: SnackBarBehavior.floating,
-                      backgroundColor: Colors.transparent,
-                      content: AwesomeSnackbarContent(
-                        title: 'Oh Snap!',
-                        message: 'You entered an incorrect email!',
-
-                        /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
-                        contentType: ContentType.failure,
-                      ),
+                    devtools.log('Reset Password Email Sent!');
+                    showErrorSnackbar(
+                      context,
+                      'Reset Password Successfully!',
                     );
-
-                    ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(snackBar);
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      loginRoute,
+                      (route) => false,
+                    );
+                  } on UserNotFoundAuthException {
+                    devtools.log('User not found.');
+                    showErrorSnackbar(
+                      context,
+                      'User Not Found',
+                    );
+                  } on GenericAuthException {
+                    devtools.log('Authentication error.');
+                    showErrorSnackbar(
+                      context,
+                      'Authentication Error.',
+                    );
                   }
                 },
                 style: TextButton.styleFrom(
@@ -145,7 +152,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                   ),
                 ),
                 child: const Text(
-                  'Next',
+                  'Reset Password',
                   style: TextStyle(
                     fontFamily: 'SF Pro Display',
                     fontStyle: FontStyle.normal,

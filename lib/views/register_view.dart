@@ -214,7 +214,8 @@ class _RegisterViewState extends State<RegisterView> {
                           top: 20.0, left: 8.0, right: 8.0, bottom: 12.0),
                       child: ElevatedButton(
                         onPressed: () async {
-                          final email = _email.text;
+                          final name = _name.text.trim();
+                          final email = _email.text.trim();
                           final password = _password.text;
                           try {
                             await AuthService.firebase().createUser(
