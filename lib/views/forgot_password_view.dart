@@ -116,7 +116,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                 onPressed: () async {
                   if (email == _email.text) {
                     Navigator.of(context).pushNamed(
-                      verificationCodeRoute,
+                      verifyEmailRoute,
                     );
                   } else {
                     final snackBar = SnackBar(

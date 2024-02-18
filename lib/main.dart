@@ -3,7 +3,7 @@ import 'package:cricai/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cricai/constants/routes.dart';
 import 'package:cricai/views/new_password_view.dart';
-import 'package:cricai/views/verification_code_view.dart';
+import 'package:cricai/views/verify_email_view.dart';
 import 'package:cricai/views/forgot_password_view.dart';
 import 'package:cricai/views/home_view.dart';
 import 'package:cricai/views/login_view.dart';
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         splashRoute: (context) => SplashView(),
         loginRoute: (context) => const LoginView(),
         forgotPasswordRoute: (context) => const ForgotPasswordView(),
-        verificationCodeRoute: (context) => const VerificationCodeView(),
+        verifyEmailRoute: (context) => const VerifyEmailView(),
         newPasswordRoute: (context) => const NewPasswordView(),
         registerRoute: (context) => const RegisterView(),
         homeRoute: (context) => const HomeView(),
@@ -59,7 +59,7 @@ class MyHomePage extends StatelessWidget {
               } else {
                 //user is present but email is not verified.
                 devtools.log('You need to verify your email first.');
-                return const VerificationCodeView();
+                return const VerifyEmailView();
               }
             } else {
               //user is not present

@@ -224,8 +224,7 @@ class _RegisterViewState extends State<RegisterView> {
                             //sending the email for the user beforehand so the user only has to verify it
                             await AuthService.firebase()
                                 .sendEmailVerification();
-                            Navigator.of(context)
-                                .pushNamed(verificationCodeRoute);
+                            Navigator.of(context).pushNamed(verifyEmailRoute);
                           } on EmailAlreadyInUseAuthException {
                             devtools.log('Email already in use');
                             showErrorSnackbar(
