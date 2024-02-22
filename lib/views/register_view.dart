@@ -2,6 +2,7 @@ import 'dart:developer' as devtools show log;
 import 'package:cricai/constants/colors.dart';
 import 'package:cricai/services/auth/auth_exceptions.dart';
 import 'package:cricai/services/auth/auth_service.dart';
+import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
 import 'package:cricai/utilities/snackbar/error_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:cricai/constants/routes.dart';
@@ -14,6 +15,7 @@ class RegisterView extends StatefulWidget {
 }
 
 class _RegisterViewState extends State<RegisterView> {
+  late final FirebaseCloudStorage _usersService;
   late final TextEditingController _name;
   late final TextEditingController _email;
   late final TextEditingController _password;
@@ -21,6 +23,7 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   void initState() {
+    _usersService = FirebaseCloudStorage();
     _name = TextEditingController();
     _email = TextEditingController();
     _password = TextEditingController();
@@ -217,6 +220,7 @@ class _RegisterViewState extends State<RegisterView> {
                           final name = _name.text.trim();
                           final email = _email.text.trim();
                           final password = _password.text;
+
                           try {
                             await AuthService.firebase().createUser(
                               email: email,
@@ -225,6 +229,17 @@ class _RegisterViewState extends State<RegisterView> {
                             //sending the email for the user beforehand so the user only has to verify it
                             await AuthService.firebase()
                                 .sendEmailVerification();
+
+                            final currentUser =
+                                AuthService.firebase().currentUser!;
+                            final userId = currentUser.id;
+
+                            await _usersService.createUser(
+                              ownerUserId: userId,
+                              name: name,
+                              userType: 'player',
+                            );
+
                             Navigator.of(context).pushNamed(verifyEmailRoute);
                           } on EmailAlreadyInUseAuthException {
                             devtools.log('Email already in use');
