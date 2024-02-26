@@ -1,5 +1,7 @@
 import 'dart:developer' as devtools show log;
 import 'package:cricai/services/auth/auth_service.dart';
+import 'package:cricai/views/page_controller.dart';
+import 'package:cricai/views/sessions/sessions_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:cricai/constants/routes.dart';
 import 'package:cricai/views/verify_email_view.dart';
@@ -32,7 +34,9 @@ class MyApp extends StatelessWidget {
         forgotPasswordRoute: (context) => const ForgotPasswordView(),
         verifyEmailRoute: (context) => const VerifyEmailView(),
         registerRoute: (context) => const RegisterView(),
+        pagesControllerRoute: (context) => const PagesController(),
         homeRoute: (context) => const HomeView(),
+        sessionsListRoute: (context) => const SessionsListView(),
       },
     );
   }
@@ -53,7 +57,7 @@ class MyHomePage extends StatelessWidget {
               if (user.isEmailVerified) {
                 //user is present and account is verified
                 devtools.log('You are a verified user.');
-                return const HomeView();
+                return const PagesController();
               } else {
                 //user is present but email is not verified.
                 devtools.log('You need to verify your email first.');
