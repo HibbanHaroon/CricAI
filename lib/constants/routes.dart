@@ -10,3 +10,5 @@ const pagesControllerRoute = '/pagesController/';
 const homeRoute = '/home/';
 
 const sessionsListRoute = '/sessions/sessionsList/';
+const createSessionRoute = '/sessions/createSession/';
+const sessionRoute = '/sessions/session/';

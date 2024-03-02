@@ -1,4 +1,5 @@
 import 'package:cricai/constants/colors.dart';
+import 'package:cricai/constants/routes.dart';
 import 'package:cricai/views/home_view.dart';
 import 'package:cricai/views/profile_view.dart';
 import 'package:cricai/views/sessions/sessions_list_view.dart';
@@ -34,8 +35,9 @@ class _PagesControllerState extends State<PagesController> {
       body: _pages[_currentIndex],
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Add your action here when the button is pressed
-          print('Floating Action Button pressed');
+          Navigator.of(context).pushNamed(
+            createSessionRoute,
+          );
         },
         tooltip: 'Add',
         backgroundColor: AppColors.primaryColor,
