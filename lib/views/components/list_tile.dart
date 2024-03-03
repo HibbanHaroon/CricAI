@@ -1,16 +1,22 @@
 import 'package:cricai/constants/colors.dart';
 import 'package:flutter/material.dart';
 
-class CustomListTile extends StatefulWidget {
+typedef SessionCallback<T> = void Function(T);
+
+class CustomListTile<T> extends StatefulWidget {
   final String title;
   final IconData leadingIcon;
   final Color leadingIconColor;
+  final T item;
+  final SessionCallback onTap;
 
   const CustomListTile({
     super.key,
     required this.title,
     required this.leadingIcon,
     required this.leadingIconColor,
+    required this.item,
+    required this.onTap,
   });
 
   @override
@@ -32,32 +38,37 @@ class _CustomListTileState extends State<CustomListTile> {
           ),
           borderRadius: BorderRadius.circular(12.0), // Border radius
         ),
-        child: ListTile(
-          titleAlignment: ListTileTitleAlignment.center,
-          dense: false,
-          leading: Icon(
-            widget.leadingIcon,
-            // Icons.format_list_bulleted_rounded,
-            color: widget.leadingIconColor,
-          ),
-          title: Text(
-            widget.title,
-            style: const TextStyle(
-              color: AppColors.darkTextColor,
-              fontFamily: 'SF Pro Display',
-              fontWeight: FontWeight.w500,
-              fontSize: 16,
-              overflow: TextOverflow.ellipsis,
+        child: InkWell(
+          onTap: () {
+            widget.onTap(widget.item);
+          },
+          child: ListTile(
+            titleAlignment: ListTileTitleAlignment.center,
+            dense: false,
+            leading: Icon(
+              widget.leadingIcon,
+              // Icons.format_list_bulleted_rounded,
+              color: widget.leadingIconColor,
             ),
-          ),
-          trailing: IconButton(
-            icon: const Icon(
-              Icons.more_vert,
-              color: AppColors.placeholderColor,
+            title: Text(
+              widget.title,
+              style: const TextStyle(
+                color: AppColors.darkTextColor,
+                fontFamily: 'SF Pro Display',
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-            onPressed: () {},
-            splashRadius: 24,
-            color: Colors.transparent,
+            trailing: IconButton(
+              icon: const Icon(
+                Icons.more_vert,
+                color: AppColors.placeholderColor,
+              ),
+              onPressed: () {},
+              splashRadius: 24,
+              color: Colors.transparent,
+            ),
           ),
         ),
       ),

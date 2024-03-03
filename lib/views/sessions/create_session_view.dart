@@ -1,8 +1,14 @@
+import 'dart:io';
+
 import 'package:cricai/constants/colors.dart';
 import 'package:cricai/constants/routes.dart';
+import 'package:cricai/services/auth/auth_service.dart';
+import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
 import 'package:cricai/utilities/get_video_file.dart';
+import 'package:cricai/utilities/snackbar/success_snackbar.dart';
 import 'package:cricai/views/components/list_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreateSessionView extends StatefulWidget {
@@ -13,13 +19,17 @@ class CreateSessionView extends StatefulWidget {
 }
 
 class _CreateSessionViewState extends State<CreateSessionView> {
+  late final FirebaseCloudStorage _sessionsService;
   late final TextEditingController _sessionName;
-  late List<XFile> _videoArray;
+  late List<Map<String, String>> _videoArray;
+  late bool _isLoading;
 
   @override
   void initState() {
+    _sessionsService = FirebaseCloudStorage();
     _sessionName = TextEditingController();
     _videoArray = [];
+    _isLoading = false;
     super.initState();
   }
 
@@ -130,7 +140,10 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                               ) as XFile;
 
                               setState(() {
-                                _videoArray.add(videoFile);
+                                _videoArray.add({
+                                  'name': videoFile.name,
+                                  'url': videoFile.path
+                                });
                               });
                             },
                             style: OutlinedButton.styleFrom(
@@ -163,7 +176,10 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                               ) as XFile;
 
                               setState(() {
-                                _videoArray.add(videoFile);
+                                _videoArray.add({
+                                  'name': videoFile.name,
+                                  'url': videoFile.path
+                                });
                               });
                             },
                             style: OutlinedButton.styleFrom(
@@ -214,10 +230,15 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                             shrinkWrap: true,
                             itemCount: _videoArray.length,
                             itemBuilder: (context, index) {
-                              return CustomListTile(
-                                title: _videoArray[index].name,
+                              final video = File(_videoArray[index]['url']!);
+                              return CustomListTile<File>(
+                                title: _videoArray[index]['name']!,
                                 leadingIcon: Icons.video_file_outlined,
                                 leadingIconColor: const Color(0xFFFA5F3B),
+                                item: video,
+                                onTap: (video) {
+                                  // New Page to display the video
+                                },
                               );
                             },
                           ),
@@ -226,8 +247,49 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 20.0, bottom: 12.0),
-                      child: ElevatedButton(
+                      child: ElevatedButton.icon(
                         onPressed: () async {
+                          setState(() {
+                            _isLoading = true;
+                          });
+
+                          final name = _sessionName.text.trim();
+
+                          final currentUser =
+                              AuthService.firebase().currentUser!;
+                          final userId = currentUser.id;
+
+                          // Creating a dummy session so that I can get the document id for that session.
+                          var documentId = await _sessionsService.createSession(
+                            ownerUserId: userId,
+                            name: name,
+                            videos: [],
+                          );
+
+                          // Passing the document id of the session, so the videos of the session are stored in the folder named with the document id.
+                          for (var i = 0; i < _videoArray.length; i++) {
+                            String downloadUrl =
+                                await _sessionsService.uploadVideo(
+                              _videoArray[i]['name']!,
+                              _videoArray[i]['url']!,
+                              documentId,
+                            );
+
+                            _videoArray[i]['url'] = downloadUrl;
+                          }
+
+                          // Updating the session with video urls stored in the firebase storage.
+                          await _sessionsService.updateSession(
+                            documentId: documentId,
+                            name: name,
+                            videos: _videoArray,
+                          );
+
+                          showSuccessSnackbar(
+                            context,
+                            'Session Created Successfully.',
+                          );
+
                           Navigator.of(context).pushReplacementNamed(
                             sessionRoute,
                           );
@@ -239,16 +301,42 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                         ),
-                        child: const Text(
-                          'Create Session',
-                          style: TextStyle(
-                            fontFamily: 'SF Pro Display',
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 18.0,
-                            color: AppColors.lightTextColor,
-                          ),
-                        ),
+                        icon: _isLoading
+                            ? Container(
+                                width: 24,
+                                height: 24,
+                                padding: const EdgeInsets.all(2.0),
+                                child: const CircularProgressIndicator(
+                                  color: AppColors.lightTextColor,
+                                  strokeWidth: 3,
+                                ),
+                              )
+                            : const FaIcon(
+                                FontAwesomeIcons.plus,
+                                size: 24,
+                                color: AppColors.lightTextColor,
+                              ),
+                        label: _isLoading
+                            ? const Text(
+                                'Creating ...',
+                                style: TextStyle(
+                                  fontFamily: 'SF Pro Display',
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 18.0,
+                                  color: AppColors.lightTextColor,
+                                ),
+                              )
+                            : const Text(
+                                'Create Session',
+                                style: TextStyle(
+                                  fontFamily: 'SF Pro Display',
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 18.0,
+                                  color: AppColors.lightTextColor,
+                                ),
+                              ),
                       ),
                     ),
                   ],

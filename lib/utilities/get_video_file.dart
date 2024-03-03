@@ -1,5 +1,4 @@
 import 'package:cricai/utilities/snackbar/error_snackbar.dart';
-import 'package:cricai/utilities/snackbar/success_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -8,10 +7,6 @@ Future<XFile?> getVideoFile(ImageSource sourceImg, BuildContext context) async {
     final videoFile = await ImagePicker().pickVideo(source: sourceImg);
 
     if (videoFile != null) {
-      showSuccessSnackbar(
-        context,
-        'Video Added Successfully.',
-      );
       return videoFile;
     }
     return null;

@@ -1,5 +1,10 @@
 import 'package:cricai/constants/colors.dart';
+import 'package:cricai/services/auth/auth_service.dart';
+import 'package:cricai/services/auth/auth_user.dart';
+import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
+import 'package:cricai/services/cloud/sessions/cloud_sessions.dart';
 import 'package:cricai/views/components/video_card.dart';
+import 'package:cricai/utilities/generics/get_arguments.dart';
 import 'package:flutter/material.dart';
 
 class SessionView extends StatefulWidget {
@@ -9,9 +14,31 @@ class SessionView extends StatefulWidget {
   State<SessionView> createState() => _SessionViewState();
 }
 
+Future<CloudSession> getSession(BuildContext context) async {
+  return context.getArgument<CloudSession>()!;
+}
+
+Future<List<dynamic>> getVideos(BuildContext context) async {
+  CloudSession session = await getSession(context);
+
+  return session.videos;
+}
+
 class _SessionViewState extends State<SessionView> {
+  late final FirebaseCloudStorage _sessionsService;
+
+  AuthUser get user => AuthService.firebase().currentUser!;
+  String get userId => user.id;
+
+  @override
+  void initState() {
+    _sessionsService = FirebaseCloudStorage();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -26,16 +53,27 @@ class _SessionViewState extends State<SessionView> {
           ),
           child: Column(
             children: [
-              const Row(
+              Row(
                 children: [
-                  Text(
-                    'Al-Amar Stadium Session',
-                    style: TextStyle(
-                      color: AppColors.darkTextColor,
-                      fontFamily: 'SF Pro Display',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 22,
-                    ),
+                  FutureBuilder(
+                    future: getSession(context),
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.done:
+                          final session = snapshot.data as CloudSession;
+                          return Text(
+                            session.name,
+                            style: const TextStyle(
+                              color: AppColors.darkTextColor,
+                              fontFamily: 'SF Pro Display',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 22,
+                            ),
+                          );
+                        default:
+                          return const Text('');
+                      }
+                    },
                   ),
                 ],
               ),
@@ -54,6 +92,59 @@ class _SessionViewState extends State<SessionView> {
                     ),
                   ],
                 ),
+              ),
+              StreamBuilder(
+                stream: getVideos(context),
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                    case ConnectionState.active:
+                      if (snapshot.hasData) {
+                        final sessions = snapshot.data as List<CloudSession>;
+
+                        return SizedBox(
+                          height: (screenHeight / 4) * 3,
+                          child: GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 0,
+                              mainAxisExtent: 190,
+                            ),
+                            itemCount: sessions.videos.length,
+                            // shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              final session = sessions.elementAt(index);
+                              return CustomListTile<CloudSession>(
+                                title: session.name,
+                                leadingIcon: Icons.format_list_bulleted_rounded,
+                                leadingIconColor: AppColors.primaryColor,
+                                // onDeleteSession: (session) async {
+                                //   await _sessionsService.deleteSession(
+                                //     session.documentId);
+                                //   );
+                                // },
+                                item: session,
+                                onTap: (session) {
+                                  Navigator.of(context).pushNamed(
+                                    sessionRoute,
+                                    arguments: session,
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        );
+                      } else {
+                        //return const CircularProgressIndicator();
+                        // print(snapshot.data);
+                        return const Text('No Videos yet.');
+                      }
+                    default:
+                      return const CircularProgressIndicator();
+                  }
+                },
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 15.0),

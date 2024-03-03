@@ -9,3 +9,7 @@ class CouldNotGetUserException extends CloudStorageException {}
 class CouldNotUpdateUserException extends CloudStorageException {}
 
 class CouldNotDeleteUserException extends CloudStorageException {}
+
+class CouldNotCreateSessionException extends CloudStorageException {}
+
+class CouldNotUpdateSessionException extends CloudStorageException {}

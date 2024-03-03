@@ -1,6 +1,6 @@
 import 'package:cricai/constants/colors.dart';
 import 'package:cricai/services/auth/auth_service.dart';
-import 'package:cricai/services/cloud/cloud_user.dart';
+import 'package:cricai/services/cloud/users/cloud_user.dart';
 import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
