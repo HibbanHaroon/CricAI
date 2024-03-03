@@ -1,7 +1,4 @@
 import 'package:cricai/constants/colors.dart';
-import 'package:cricai/services/auth/auth_service.dart';
-import 'package:cricai/services/auth/auth_user.dart';
-import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
 import 'package:cricai/services/cloud/sessions/cloud_sessions.dart';
 import 'package:cricai/views/components/video_card.dart';
 import 'package:cricai/utilities/generics/get_arguments.dart';
@@ -20,22 +17,10 @@ Future<CloudSession> getSession(BuildContext context) async {
 
 Future<List<dynamic>> getVideos(BuildContext context) async {
   CloudSession session = await getSession(context);
-
   return session.videos;
 }
 
 class _SessionViewState extends State<SessionView> {
-  late final FirebaseCloudStorage _sessionsService;
-
-  AuthUser get user => AuthService.firebase().currentUser!;
-  String get userId => user.id;
-
-  @override
-  void initState() {
-    _sessionsService = FirebaseCloudStorage();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -93,17 +78,17 @@ class _SessionViewState extends State<SessionView> {
                   ],
                 ),
               ),
-              StreamBuilder(
-                stream: getVideos(context),
+              FutureBuilder(
+                future: getVideos(context),
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
-                    case ConnectionState.active:
+                    case ConnectionState.done:
                       if (snapshot.hasData) {
-                        final sessions = snapshot.data as List<CloudSession>;
+                        final videos = snapshot.data as List<dynamic>;
 
                         return SizedBox(
-                          height: (screenHeight / 4) * 3,
+                          height: (screenHeight / 6) * 4,
                           child: GridView.builder(
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
@@ -112,27 +97,28 @@ class _SessionViewState extends State<SessionView> {
                               mainAxisSpacing: 0,
                               mainAxisExtent: 190,
                             ),
-                            itemCount: sessions.videos.length,
+                            itemCount: videos.length,
                             // shrinkWrap: true,
                             itemBuilder: (context, index) {
-                              final session = sessions.elementAt(index);
-                              return CustomListTile<CloudSession>(
-                                title: session.name,
-                                leadingIcon: Icons.format_list_bulleted_rounded,
-                                leadingIconColor: AppColors.primaryColor,
-                                // onDeleteSession: (session) async {
-                                //   await _sessionsService.deleteSession(
-                                //     session.documentId);
-                                //   );
-                                // },
-                                item: session,
-                                onTap: (session) {
-                                  Navigator.of(context).pushNamed(
-                                    sessionRoute,
-                                    arguments: session,
-                                  );
-                                },
-                              );
+                              final video = videos.elementAt(index);
+                              return VideoCard();
+                              // return VideoCard(
+                              //   title: session.name,
+                              //   leadingIcon: Icons.format_list_bulleted_rounded,
+                              //   leadingIconColor: AppColors.primaryColor,
+                              //   // onDeleteSession: (session) async {
+                              //   //   await _sessionsService.deleteSession(
+                              //   //     session.documentId);
+                              //   //   );
+                              //   // },
+                              //   item: session,
+                              //   onTap: (session) {
+                              //     Navigator.of(context).pushNamed(
+                              //       sessionRoute,
+                              //       arguments: session,
+                              //     );
+                              //   },
+                              // );
                             },
                           ),
                         );
@@ -145,29 +131,6 @@ class _SessionViewState extends State<SessionView> {
                       return const CircularProgressIndicator();
                   }
                 },
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 15.0),
-                child: SizedBox(
-                  height: 545.0,
-                  child: Scrollbar(
-                    thumbVisibility: true,
-                    child: GridView.builder(
-                      shrinkWrap: true,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 0,
-                        mainAxisExtent: 190,
-                      ),
-                      itemCount: 5,
-                      itemBuilder: (BuildContext context, int index) {
-                        return const VideoCard();
-                      },
-                    ),
-                  ),
-                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 20.0, bottom: 12.0),
