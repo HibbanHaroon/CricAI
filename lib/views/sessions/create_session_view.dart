@@ -1,7 +1,9 @@
 import 'package:cricai/constants/colors.dart';
 import 'package:cricai/constants/routes.dart';
+import 'package:cricai/utilities/get_video_file.dart';
 import 'package:cricai/views/components/list_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CreateSessionView extends StatefulWidget {
   const CreateSessionView({super.key});
@@ -12,10 +14,12 @@ class CreateSessionView extends StatefulWidget {
 
 class _CreateSessionViewState extends State<CreateSessionView> {
   late final TextEditingController _sessionName;
+  late List<XFile> _videoArray;
 
   @override
   void initState() {
     _sessionName = TextEditingController();
+    _videoArray = [];
     super.initState();
   }
 
@@ -119,7 +123,16 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                       child: Row(
                         children: [
                           OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              XFile? videoFile = await getVideoFile(
+                                ImageSource.gallery,
+                                context,
+                              ) as XFile;
+
+                              setState(() {
+                                _videoArray.add(videoFile);
+                              });
+                            },
                             style: OutlinedButton.styleFrom(
                               backgroundColor: const Color(0xFFB6E0FF),
                               shape: RoundedRectangleBorder(
@@ -143,7 +156,16 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                             width: 10,
                           ),
                           OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              XFile? videoFile = await getVideoFile(
+                                ImageSource.camera,
+                                context,
+                              ) as XFile;
+
+                              setState(() {
+                                _videoArray.add(videoFile);
+                              });
+                            },
                             style: OutlinedButton.styleFrom(
                               backgroundColor: const Color(0xFFFBE7E3),
                               shape: RoundedRectangleBorder(
@@ -190,10 +212,10 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                           thumbVisibility: true,
                           child: ListView.builder(
                             shrinkWrap: true,
-                            itemCount: 5,
+                            itemCount: _videoArray.length,
                             itemBuilder: (context, index) {
                               return CustomListTile(
-                                title: 'Video ${index + 1}',
+                                title: _videoArray[index].name,
                                 leadingIcon: Icons.video_file_outlined,
                                 leadingIconColor: const Color(0xFFFA5F3B),
                               );
