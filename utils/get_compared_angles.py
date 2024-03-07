@@ -27,6 +27,6 @@ def get_compared_angles(player_angles, ideal_angles):
         angles[frame_index] = frame_difference_angles
 
     # Calculate mean angles
-    mean_angles = [sum(frame_angles) / 12 for frame_angles in zip(*angles.values())]
+    # mean_angles = [sum(frame_angles) / 12 for frame_angles in zip(*angles.values())]
 
-    return mean_angles
+    return angles
