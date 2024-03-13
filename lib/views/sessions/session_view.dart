@@ -21,6 +21,32 @@ Future<List<dynamic>> getVideos(BuildContext context) async {
 }
 
 class _SessionViewState extends State<SessionView> {
+  late bool _isGenerationDisabled;
+  late List<dynamic> videos;
+
+  @override
+  void initState() {
+    _isGenerationDisabled = true;
+    super.initState();
+  }
+
+  // if any analysis video url is empty then that means analysis will be generated for the videos having empty analysis video url
+  // This function is helpful in determining the state of the isGenerationDisabled
+  void isGenerationNeeded(List<dynamic> videos) {
+    bool isAnalysisVideoUrlEmpty = false;
+    for (var i = 0; i < videos.length; i++) {
+      var video = videos.elementAt(i);
+      if (video['analysis_video_url'] == '') {
+        isAnalysisVideoUrlEmpty = true;
+      }
+    }
+
+    // isAnalysisVideoUrlEmpty = false, it means that all videos have analysis generated... hence isGenerationDisabled should be true
+    setState(() {
+      _isGenerationDisabled = !isAnalysisVideoUrlEmpty;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -85,7 +111,7 @@ class _SessionViewState extends State<SessionView> {
                     case ConnectionState.waiting:
                     case ConnectionState.done:
                       if (snapshot.hasData) {
-                        final videos = snapshot.data as List<dynamic>;
+                        videos = snapshot.data as List<dynamic>;
 
                         return SizedBox(
                           height: (screenHeight / 6) * 4,
@@ -135,10 +161,23 @@ class _SessionViewState extends State<SessionView> {
               Padding(
                 padding: const EdgeInsets.only(top: 20.0, bottom: 12.0),
                 child: ElevatedButton(
-                  onPressed: () async {},
+                  onPressed: _isGenerationDisabled
+                      ? null
+                      : () async {
+                          if (_isGenerationDisabled == false) {
+                            for (var i = 0; i < videos.length; i++) {
+                              var video = videos.elementAt(i);
+                              if (video['analysis_video_url'] == '') {
+                                // Write the code to fetch the data from api and then update the session
+                              }
+                            }
+                          }
+                        },
                   style: TextButton.styleFrom(
                     fixedSize: const Size(398.0, 60.0),
-                    backgroundColor: AppColors.primaryColor,
+                    backgroundColor: _isGenerationDisabled
+                        ? AppColors.greyColor
+                        : AppColors.primaryColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.0),
                     ),

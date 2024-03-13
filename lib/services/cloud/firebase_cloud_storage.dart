@@ -77,8 +77,9 @@ class FirebaseCloudStorage {
   // Uploads a video to a Firebase Storage in a sessions folder. Each Session will have it's own folder represented by the sessionId.
   Future<String> uploadVideo(
       String videoName, String videoPath, String sessionId) async {
-    Reference ref =
-        _videosStorage.ref().child('sessions/$sessionId/$videoName.mp4');
+    Reference ref = _videosStorage
+        .ref()
+        .child('sessions/$sessionId/$videoName/raw_video.mp4');
     await ref.putFile(File(videoPath));
     String downloadUrl = await ref.getDownloadURL();
     return downloadUrl;

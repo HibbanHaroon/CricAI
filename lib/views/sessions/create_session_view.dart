@@ -142,7 +142,9 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                               setState(() {
                                 _videoArray.add({
                                   'name': videoFile.name,
-                                  'url': videoFile.path
+                                  'raw_video_url': videoFile.path,
+                                  'analysis_video_url': '',
+                                  'compared_angles': ''
                                 });
                               });
                             },
@@ -178,7 +180,9 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                               setState(() {
                                 _videoArray.add({
                                   'name': videoFile.name,
-                                  'url': videoFile.path
+                                  'raw_video_url': videoFile.path,
+                                  'analysis_video_url': '',
+                                  'compared_angles': ''
                                 });
                               });
                             },
@@ -230,7 +234,8 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                             shrinkWrap: true,
                             itemCount: _videoArray.length,
                             itemBuilder: (context, index) {
-                              final video = File(_videoArray[index]['url']!);
+                              final video =
+                                  File(_videoArray[index]['raw_video_url']!);
                               return CustomListTile<File>(
                                 title: _videoArray[index]['name']!,
                                 leadingIcon: Icons.video_file_outlined,
@@ -271,11 +276,11 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                             String downloadUrl =
                                 await _sessionsService.uploadVideo(
                               _videoArray[i]['name']!,
-                              _videoArray[i]['url']!,
+                              _videoArray[i]['raw_video_url']!,
                               documentId,
                             );
 
-                            _videoArray[i]['url'] = downloadUrl;
+                            _videoArray[i]['raw_video_url'] = downloadUrl;
                           }
 
                           // Updating the session with video urls stored in the firebase storage.
