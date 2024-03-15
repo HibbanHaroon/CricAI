@@ -1,4 +1,5 @@
 env/
 output_frames/
 analysis.mp4
+.env
 serviceAccount.json

@@ -2,13 +2,21 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import storage
 from uuid import uuid4
+import os
+import json
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def get_saved_video_url(sessionId: str, videoName: str):
-    cred = credentials.Certificate("serviceAccount.json")
-    default_app = firebase_admin.initialize_app(cred, {
-        'storageBucket': 'cricai-001.appspot.com'
-    })
+    service_account_str = os.getenv("SERVICE_ACCOUNT")
+    service_account_obj = json.loads(service_account_str)
 
+    if not firebase_admin._apps:
+        cred = credentials.Certificate(service_account_obj)
+        default_app = firebase_admin.initialize_app(cred, {
+            'storageBucket': 'cricai-001.appspot.com'
+        })
     bucket = storage.bucket()
 
     # Saving the file in the given path with the file name analysis.mp4
