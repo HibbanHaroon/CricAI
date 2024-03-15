@@ -3,6 +3,7 @@ import 'package:cricai/services/cloud/sessions/cloud_sessions.dart';
 import 'package:cricai/views/components/video_card.dart';
 import 'package:cricai/utilities/generics/get_arguments.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class SessionView extends StatefulWidget {
   const SessionView({super.key});
@@ -23,10 +24,11 @@ Future<List<dynamic>> getVideos(BuildContext context) async {
 class _SessionViewState extends State<SessionView> {
   late bool _isGenerationDisabled;
   late List<dynamic> videos;
+  late CloudSession session;
 
   @override
   void initState() {
-    _isGenerationDisabled = true;
+    _isGenerationDisabled = false;
     super.initState();
   }
 
@@ -71,7 +73,7 @@ class _SessionViewState extends State<SessionView> {
                     builder: (context, snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.done:
-                          final session = snapshot.data as CloudSession;
+                          session = snapshot.data as CloudSession;
                           return Text(
                             session.name,
                             style: const TextStyle(
@@ -165,12 +167,17 @@ class _SessionViewState extends State<SessionView> {
                       ? null
                       : () async {
                           if (_isGenerationDisabled == false) {
-                            for (var i = 0; i < videos.length; i++) {
-                              var video = videos.elementAt(i);
-                              if (video['analysis_video_url'] == '') {
-                                // Write the code to fetch the data from api and then update the session
-                              }
-                            }
+                            // var sessionId = session.documentId;
+                            // var videoName = videos[0]['name'];
+                            // var raw_video_url = videos[0]['raw_video_url'];
+                            // raw_video_url = Uri.parse(raw_video_url);
+
+                            var apiUrl =
+                                'http://10.1.111.123:8000/?url=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fcricai-001.appspot.com%2Fo%2Fideal_videos%252Fideal.mp4%3Falt%3Dmedia%26token%3De19e9ea3-cc1d-4db5-a7b3-8147ec25680e&sessionId=4PVCA5wMnxtkpqSt3cDS&videoName=VID-20240302-WA0040.mp4';
+
+                            var response = await http.get(Uri.parse(apiUrl));
+
+                            print('Response: ${response.body}');
                           }
                         },
                   style: TextButton.styleFrom(
