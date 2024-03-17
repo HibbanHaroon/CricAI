@@ -36,7 +36,7 @@ async def root(url: str, sessionId: str, videoName: str):
     # Shot Comparison - get compared angles of player and the ideal player
     compared_angles = get_compared_angles(angles, ideal_angles)
 
-    return {'compared_angles': compared_angles, 'analysis_video': analysis_video}
+    return {'compared_angles': compared_angles, 'analysis_video_url': analysis_video}
 
 # sessionId='4PVCA5wMnxtkpqSt3cDS', videoName='VID-20240302-WA0040.mp4'
 # http://127.0.0.1:8000/?url=https://firebasestorage.googleapis.com/v0/b/cricai-001.appspot.com/o/ideal_videos%2Fideal.mp4?alt=media&token=e19e9ea3-cc1d-4db5-a7b3-8147ec25680e
