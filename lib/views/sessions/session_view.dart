@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cricai/constants/colors.dart';
+import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
 import 'package:cricai/services/cloud/sessions/cloud_sessions.dart';
 import 'package:cricai/views/components/video_card.dart';
 import 'package:cricai/utilities/generics/get_arguments.dart';
@@ -22,13 +25,21 @@ Future<List<dynamic>> getVideos(BuildContext context) async {
 }
 
 class _SessionViewState extends State<SessionView> {
+  late final FirebaseCloudStorage _sessionsService;
   late bool _isGenerationDisabled;
   late List<dynamic> videos;
   late CloudSession session;
 
   @override
   void initState() {
-    _isGenerationDisabled = false;
+    _sessionsService = FirebaseCloudStorage();
+    _isGenerationDisabled = true;
+
+    // This is run after building all the widgets and the state of the Generate Analysis button is updated through this function call.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      isGenerationNeeded(videos);
+    });
+
     super.initState();
   }
 
@@ -45,7 +56,11 @@ class _SessionViewState extends State<SessionView> {
 
     // isAnalysisVideoUrlEmpty = false, it means that all videos have analysis generated... hence isGenerationDisabled should be true
     setState(() {
-      _isGenerationDisabled = !isAnalysisVideoUrlEmpty;
+      if (isAnalysisVideoUrlEmpty == false) {
+        _isGenerationDisabled = true;
+      } else {
+        _isGenerationDisabled = false;
+      }
     });
   }
 
@@ -129,21 +144,19 @@ class _SessionViewState extends State<SessionView> {
                             // shrinkWrap: true,
                             itemBuilder: (context, index) {
                               final video = videos.elementAt(index);
-                              return VideoCard();
+                              // return VideoCard();
                               // return VideoCard(
-                              //   title: session.name,
-                              //   leadingIcon: Icons.format_list_bulleted_rounded,
-                              //   leadingIconColor: AppColors.primaryColor,
+                              //   title: video['name'],
                               //   // onDeleteSession: (session) async {
                               //   //   await _sessionsService.deleteSession(
                               //   //     session.documentId);
                               //   //   );
                               //   // },
-                              //   item: session,
-                              //   onTap: (session) {
+                              //   item: video,
+                              //   onTap: (video) {
                               //     Navigator.of(context).pushNamed(
-                              //       sessionRoute,
-                              //       arguments: session,
+                              //       videoRoute,
+                              //       arguments: video,
                               //     );
                               //   },
                               // );
@@ -167,17 +180,38 @@ class _SessionViewState extends State<SessionView> {
                       ? null
                       : () async {
                           if (_isGenerationDisabled == false) {
-                            // var sessionId = session.documentId;
-                            // var videoName = videos[0]['name'];
-                            // var raw_video_url = videos[0]['raw_video_url'];
-                            // raw_video_url = Uri.parse(raw_video_url);
+                            for (var i = 0; i < videos.length; i++) {
+                              var sessionId = session.documentId;
+                              var videoName = videos[i]['name'];
+                              var rawVideoUrl = videos[i]['raw_video_url'];
 
-                            var apiUrl =
-                                'http://10.1.111.123:8000/?url=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Fcricai-001.appspot.com%2Fo%2Fideal_videos%252Fideal.mp4%3Falt%3Dmedia%26token%3De19e9ea3-cc1d-4db5-a7b3-8147ec25680e&sessionId=4PVCA5wMnxtkpqSt3cDS&videoName=VID-20240302-WA0040.mp4';
+                              var apiUrl =
+                                  'http://192.168.18.232:8000/?url=$rawVideoUrl&sessionId=$sessionId&videoName=$videoName';
+                              apiUrl = Uri.encodeFull(apiUrl);
 
-                            var response = await http.get(Uri.parse(apiUrl));
+                              var response = await http.get(Uri.parse(apiUrl));
+                              // print('Response: ${response.body}');
 
-                            print('Response: ${response.body}');
+                              var jsonResponse = jsonDecode(response.body);
+
+                              var comparedAngles =
+                                  jsonResponse['compared_angles'];
+                              var analysisVideoUrl =
+                                  jsonResponse['analysis_video_url'];
+                              print(comparedAngles);
+                              print(analysisVideoUrl);
+
+                              videos[i]['compared_angles'] = comparedAngles;
+                              videos[i]['analysis_video_url'] =
+                                  analysisVideoUrl;
+                            }
+
+                            // Updating the session with video urls stored in the firebase storage.
+                            await _sessionsService.updateSession(
+                              documentId: session.documentId,
+                              name: session.name,
+                              videos: videos,
+                            );
                           }
                         },
                   style: TextButton.styleFrom(

@@ -88,7 +88,7 @@ class FirebaseCloudStorage {
   Future<String> createSession({
     required String ownerUserId,
     required String name,
-    required List<Map<String, String>> videos,
+    required List<dynamic> videos,
   }) async {
     try {
       var docRef = await sessions.add({
@@ -112,7 +112,7 @@ class FirebaseCloudStorage {
   Future<void> updateSession({
     required String documentId,
     required String name,
-    required List<Map<String, String>> videos,
+    required List<dynamic> videos,
   }) async {
     try {
       await sessions.doc(documentId).update({

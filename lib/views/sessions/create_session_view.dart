@@ -21,7 +21,7 @@ class CreateSessionView extends StatefulWidget {
 class _CreateSessionViewState extends State<CreateSessionView> {
   late final FirebaseCloudStorage _sessionsService;
   late final TextEditingController _sessionName;
-  late List<Map<String, String>> _videoArray;
+  late List<dynamic> _videoArray;
   late bool _isLoading;
 
   @override
@@ -323,7 +323,7 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                               ),
                         label: _isLoading
                             ? const Text(
-                                'Creating ...',
+                                'Creating...',
                                 style: TextStyle(
                                   fontFamily: 'SF Pro Display',
                                   fontStyle: FontStyle.normal,
