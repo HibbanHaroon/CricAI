@@ -45,6 +45,10 @@ dependencies:
   flutter_svg: ^2.0.10+1
   image_picker: ^1.0.7
   firebase_storage: ^11.6.7
+  video_player: ^2.8.3
+  flick_video_player: ^0.7.0
+  flutter_ffmpeg: ^0.4.2
+  path_provider: ^2.1.2
 
 dev_dependencies:
   flutter_test:

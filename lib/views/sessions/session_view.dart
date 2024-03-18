@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cricai/constants/colors.dart';
+import 'package:cricai/constants/routes.dart';
 import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
 import 'package:cricai/services/cloud/sessions/cloud_sessions.dart';
 import 'package:cricai/views/components/video_card.dart';
@@ -39,6 +40,8 @@ class _SessionViewState extends State<SessionView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       isGenerationNeeded(videos);
     });
+
+    videos = [];
 
     super.initState();
   }
@@ -141,25 +144,23 @@ class _SessionViewState extends State<SessionView> {
                               mainAxisExtent: 190,
                             ),
                             itemCount: videos.length,
-                            // shrinkWrap: true,
                             itemBuilder: (context, index) {
                               final video = videos.elementAt(index);
-                              // return VideoCard();
-                              // return VideoCard(
-                              //   title: video['name'],
-                              //   // onDeleteSession: (session) async {
-                              //   //   await _sessionsService.deleteSession(
-                              //   //     session.documentId);
-                              //   //   );
-                              //   // },
-                              //   item: video,
-                              //   onTap: (video) {
-                              //     Navigator.of(context).pushNamed(
-                              //       videoRoute,
-                              //       arguments: video,
-                              //     );
-                              //   },
-                              // );
+                              return VideoCard(
+                                name: video['name'],
+                                // onDeleteSession: (session) async {
+                                //   await _sessionsService.deleteSession(
+                                //     session.documentId);
+                                //   );
+                                // },
+                                item: video,
+                                onTap: (video) {
+                                  Navigator.of(context).pushNamed(
+                                    viewResultRoute,
+                                    arguments: video,
+                                  );
+                                },
+                              );
                             },
                           ),
                         );

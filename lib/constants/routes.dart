@@ -12,3 +12,4 @@ const homeRoute = '/home/';
 const sessionsListRoute = '/sessions/sessionsList/';
 const createSessionRoute = '/sessions/createSession/';
 const sessionRoute = '/sessions/session/';
+const viewResultRoute = '/sessions/viewResult/';
