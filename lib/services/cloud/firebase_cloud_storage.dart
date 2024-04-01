@@ -124,6 +124,25 @@ class FirebaseCloudStorage {
     }
   }
 
+  Future<CloudSession> getSession({
+    required String ownerUserId,
+    required String documentId,
+  }) async {
+    try {
+      var documentSnapshot = await sessions.doc(documentId).get();
+
+      if (documentSnapshot.exists) {
+        CloudSession session =
+            CloudSession.fromDocumentSnapshot(documentSnapshot);
+        return session;
+      } else {
+        throw CouldNotGetSessionException();
+      }
+    } catch (e) {
+      throw CouldNotGetSessionException();
+    }
+  }
+
   static final FirebaseCloudStorage _shared =
       FirebaseCloudStorage._sharedInstance();
   //This is a private constructor of the class FirebaseCloudStorage

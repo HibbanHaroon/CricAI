@@ -4,6 +4,7 @@ import 'package:cricai/constants/colors.dart';
 import 'package:cricai/constants/routes.dart';
 import 'package:cricai/services/auth/auth_service.dart';
 import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
+import 'package:cricai/services/cloud/sessions/cloud_sessions.dart';
 import 'package:cricai/utilities/get_video_file.dart';
 import 'package:cricai/utilities/snackbar/success_snackbar.dart';
 import 'package:cricai/views/components/list_tile.dart';
@@ -295,8 +296,13 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                             'Session Created Successfully.',
                           );
 
+                          CloudSession session =
+                              await _sessionsService.getSession(
+                                  ownerUserId: userId, documentId: documentId);
+
                           Navigator.of(context).pushReplacementNamed(
                             sessionRoute,
+                            arguments: session,
                           );
                         },
                         style: TextButton.styleFrom(

@@ -26,4 +26,11 @@ class CloudSession {
         name = snapshot.data()[nameFieldName] as String,
         time = snapshot.data()[timeFieldName] as Timestamp,
         videos = snapshot.data()[videosFieldName] as List<dynamic>;
+
+  CloudSession.fromDocumentSnapshot(DocumentSnapshot snapshot)
+      : documentId = snapshot.id,
+        ownerUserId = snapshot.get(ownerUserIdFieldName),
+        name = snapshot.get(nameFieldName) as String,
+        time = snapshot.get(timeFieldName) as Timestamp,
+        videos = snapshot.get(videosFieldName) as List<dynamic>;
 }

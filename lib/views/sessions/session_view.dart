@@ -16,12 +16,18 @@ class SessionView extends StatefulWidget {
   State<SessionView> createState() => _SessionViewState();
 }
 
+// Using ValueNotifier, so that when the videos are retrieved using the getVideos function,
+// before drawing the Elevated button, isGenerationNeeded function will be called and
+// the state of the button will be decided
+final sessionVideos = ValueNotifier<List<dynamic>>([]);
+
 Future<CloudSession> getSession(BuildContext context) async {
   return context.getArgument<CloudSession>()!;
 }
 
 Future<List<dynamic>> getVideos(BuildContext context) async {
   CloudSession session = await getSession(context);
+  sessionVideos.value = session.videos;
   return session.videos;
 }
 
@@ -35,11 +41,6 @@ class _SessionViewState extends State<SessionView> {
   void initState() {
     _sessionsService = FirebaseCloudStorage();
     _isGenerationDisabled = true;
-
-    // This is run after building all the widgets and the state of the Generate Analysis button is updated through this function call.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      isGenerationNeeded(videos);
-    });
 
     videos = [];
 
@@ -58,13 +59,11 @@ class _SessionViewState extends State<SessionView> {
     }
 
     // isAnalysisVideoUrlEmpty = false, it means that all videos have analysis generated... hence isGenerationDisabled should be true
-    setState(() {
-      if (isAnalysisVideoUrlEmpty == false) {
-        _isGenerationDisabled = true;
-      } else {
-        _isGenerationDisabled = false;
-      }
-    });
+    if (isAnalysisVideoUrlEmpty == false) {
+      _isGenerationDisabled = true;
+    } else {
+      _isGenerationDisabled = false;
+    }
   }
 
   @override
@@ -176,65 +175,75 @@ class _SessionViewState extends State<SessionView> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 20.0, bottom: 12.0),
-                child: ElevatedButton(
-                  onPressed: _isGenerationDisabled
-                      ? null
-                      : () async {
-                          if (_isGenerationDisabled == false) {
-                            for (var i = 0; i < videos.length; i++) {
-                              var sessionId = session.documentId;
-                              var videoName = videos[i]['name'];
-                              var rawVideoUrl = videos[i]['raw_video_url'];
+                child: ValueListenableBuilder<List<dynamic>>(
+                    valueListenable: sessionVideos,
+                    builder: (context, videos, child) {
+                      isGenerationNeeded(videos);
+                      return ElevatedButton(
+                        onPressed: _isGenerationDisabled
+                            ? null
+                            : () async {
+                                if (_isGenerationDisabled == false) {
+                                  for (var i = 0; i < videos.length; i++) {
+                                    var sessionId = session.documentId;
+                                    var videoName = videos[i]['name'];
+                                    var rawVideoUrl =
+                                        videos[i]['raw_video_url'];
 
-                              var apiUrl =
-                                  'http://192.168.18.232:8000/?url=$rawVideoUrl&sessionId=$sessionId&videoName=$videoName';
-                              apiUrl = Uri.encodeFull(apiUrl);
+                                    var apiUrl =
+                                        'http://192.168.18.232:8000/?url=$rawVideoUrl&sessionId=$sessionId&videoName=$videoName';
+                                    apiUrl = Uri.encodeFull(apiUrl);
 
-                              var response = await http.get(Uri.parse(apiUrl));
-                              // print('Response: ${response.body}');
+                                    var response =
+                                        await http.get(Uri.parse(apiUrl));
+                                    // print('Response: ${response.body}');
 
-                              var jsonResponse = jsonDecode(response.body);
+                                    var jsonResponse =
+                                        jsonDecode(response.body);
 
-                              var comparedAngles =
-                                  jsonResponse['compared_angles'];
-                              var analysisVideoUrl =
-                                  jsonResponse['analysis_video_url'];
-                              print(comparedAngles);
-                              print(analysisVideoUrl);
+                                    var comparedAngles =
+                                        jsonResponse['compared_angles'];
+                                    var analysisVideoUrl =
+                                        jsonResponse['analysis_video_url'];
 
-                              videos[i]['compared_angles'] = comparedAngles;
-                              videos[i]['analysis_video_url'] =
-                                  analysisVideoUrl;
-                            }
+                                    print(comparedAngles);
+                                    print(analysisVideoUrl);
 
-                            // Updating the session with video urls stored in the firebase storage.
-                            await _sessionsService.updateSession(
-                              documentId: session.documentId,
-                              name: session.name,
-                              videos: videos,
-                            );
-                          }
-                        },
-                  style: TextButton.styleFrom(
-                    fixedSize: const Size(398.0, 60.0),
-                    backgroundColor: _isGenerationDisabled
-                        ? AppColors.greyColor
-                        : AppColors.primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                  ),
-                  child: const Text(
-                    'Generate Analysis',
-                    style: TextStyle(
-                      fontFamily: 'SF Pro Display',
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 18.0,
-                      color: AppColors.lightTextColor,
-                    ),
-                  ),
-                ),
+                                    videos[i]['compared_angles'] =
+                                        comparedAngles;
+                                    videos[i]['analysis_video_url'] =
+                                        analysisVideoUrl;
+                                  }
+
+                                  // Updating the session with video urls stored in the firebase storage.
+                                  await _sessionsService.updateSession(
+                                    documentId: session.documentId,
+                                    name: session.name,
+                                    videos: videos,
+                                  );
+                                }
+                              },
+                        style: TextButton.styleFrom(
+                          fixedSize: const Size(398.0, 60.0),
+                          backgroundColor: _isGenerationDisabled
+                              ? AppColors.greyColor
+                              : AppColors.primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                        ),
+                        child: const Text(
+                          'Generate Analysis',
+                          style: TextStyle(
+                            fontFamily: 'SF Pro Display',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 18.0,
+                            color: AppColors.lightTextColor,
+                          ),
+                        ),
+                      );
+                    }),
               ),
             ],
           ),
