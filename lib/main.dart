@@ -8,10 +8,10 @@ import 'package:cricai/views/sessions/view_result.dart';
 import 'package:flutter/material.dart';
 import 'package:cricai/constants/routes.dart';
 import 'package:cricai/views/verify_email_view.dart';
-import 'package:cricai/views/forgot_password_view.dart';
+import 'package:cricai/views/user_authentication/forgot_password_view.dart';
 import 'package:cricai/views/home_view.dart';
-import 'package:cricai/views/login_view.dart';
-import 'package:cricai/views/register_view.dart';
+import 'package:cricai/views/user_authentication/login_view.dart';
+import 'package:cricai/views/user_authentication/register_view.dart';
 import 'package:cricai/views/splash.dart';
 
 void main() {

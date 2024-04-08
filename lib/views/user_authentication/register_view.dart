@@ -20,6 +20,8 @@ class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
   late final TextEditingController _confirmPassword;
+  static const List<String> _userTypes = <String>['Player', 'Coach'];
+  late String _userType;
 
   @override
   void initState() {
@@ -28,6 +30,7 @@ class _RegisterViewState extends State<RegisterView> {
     _email = TextEditingController();
     _password = TextEditingController();
     _confirmPassword = TextEditingController();
+    _userType = _userTypes.first;
     super.initState();
   }
 
@@ -214,6 +217,42 @@ class _RegisterViewState extends State<RegisterView> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
+                          top: 14.0, left: 7.0, right: 7.0, bottom: 0.0),
+                      child: Row(
+                        children: <Widget>[
+                          DropdownMenu<String>(
+                            width: screenWidth - ((9 * screenWidth) / 100),
+                            initialSelection: _userType,
+                            label: const Text('User Type'),
+                            onSelected: (String? value) {
+                              setState(() {
+                                _userType = value!;
+                              });
+                            },
+                            dropdownMenuEntries: _userTypes
+                                .map<DropdownMenuEntry<String>>((String value) {
+                              return DropdownMenuEntry<String>(
+                                value: value,
+                                label: value,
+                                style: MenuItemButton.styleFrom(
+                                  textStyle: const TextStyle(
+                                    fontFamily: 'SF Pro Display',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 18.0,
+                                    height: 1.0,
+                                    color: AppColors.darkTextColor,
+                                  ),
+                                  foregroundColor: AppColors.primaryColor,
+                                ),
+                              );
+                            }).toList(),
+                          )
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
                           top: 20.0, left: 8.0, right: 8.0, bottom: 12.0),
                       child: ElevatedButton(
                         onPressed: () async {
@@ -237,7 +276,7 @@ class _RegisterViewState extends State<RegisterView> {
                             await _usersService.createUser(
                               ownerUserId: userId,
                               name: name,
-                              userType: 'player',
+                              userType: _userType.toLowerCase(),
                             );
 
                             Navigator.of(context).pushNamed(verifyEmailRoute);
