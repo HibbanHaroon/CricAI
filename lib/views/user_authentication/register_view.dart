@@ -6,6 +6,7 @@ import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
 import 'package:cricai/utilities/snackbar/error_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:cricai/constants/routes.dart';
+import 'package:cricai/services/cloud/users/user_types.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -20,7 +21,6 @@ class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
   late final TextEditingController _confirmPassword;
-  static const List<String> _userTypes = <String>['Player', 'Coach'];
   late String _userType;
 
   @override
@@ -30,7 +30,7 @@ class _RegisterViewState extends State<RegisterView> {
     _email = TextEditingController();
     _password = TextEditingController();
     _confirmPassword = TextEditingController();
-    _userType = _userTypes.first;
+    _userType = userTypes.first;
     super.initState();
   }
 
@@ -229,7 +229,7 @@ class _RegisterViewState extends State<RegisterView> {
                                 _userType = value!;
                               });
                             },
-                            dropdownMenuEntries: _userTypes
+                            dropdownMenuEntries: userTypes
                                 .map<DropdownMenuEntry<String>>((String value) {
                               return DropdownMenuEntry<String>(
                                 value: value,

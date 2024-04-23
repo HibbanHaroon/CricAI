@@ -1,13 +1,14 @@
 import 'dart:developer' as devtools show log;
 import 'package:cricai/services/auth/auth_service.dart';
 import 'package:cricai/views/page_controller.dart';
+import 'package:cricai/views/players/players_list_view.dart';
 import 'package:cricai/views/sessions/create_session_view.dart';
 import 'package:cricai/views/sessions/session_view.dart';
 import 'package:cricai/views/sessions/sessions_list_view.dart';
 import 'package:cricai/views/sessions/view_result.dart';
 import 'package:flutter/material.dart';
 import 'package:cricai/constants/routes.dart';
-import 'package:cricai/views/verify_email_view.dart';
+import 'package:cricai/views/user_authentication/verify_email_view.dart';
 import 'package:cricai/views/user_authentication/forgot_password_view.dart';
 import 'package:cricai/views/home_view.dart';
 import 'package:cricai/views/user_authentication/login_view.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         createSessionRoute: (context) => const CreateSessionView(),
         sessionRoute: (context) => const SessionView(),
         viewResultRoute: (context) => const ResultView(),
+        playersListRoute: (context) => const PlayersListView(),
       },
     );
   }
