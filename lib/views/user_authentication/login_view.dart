@@ -1,5 +1,4 @@
 import 'dart:developer' as devtools show log;
-import 'package:cricai/services/cloud/users/user_types.dart';
 import 'package:cricai/services/auth/auth_exceptions.dart';
 import 'package:cricai/services/auth/auth_service.dart';
 import 'package:cricai/utilities/snackbar/error_snackbar.dart';
@@ -18,13 +17,11 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
-  late String _userType;
 
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
-    _userType = userTypes.first;
     super.initState();
   }
 
@@ -153,43 +150,6 @@ class _LoginViewState extends State<LoginView> {
                               height: 1.0,
                               color: AppColors.darkTextColor,
                             ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 14.0, left: 7.0, right: 7.0, bottom: 0.0),
-                          child: Row(
-                            children: <Widget>[
-                              DropdownMenu<String>(
-                                width: screenWidth - ((9 * screenWidth) / 100),
-                                initialSelection: _userType,
-                                label: const Text('User Type'),
-                                onSelected: (String? value) {
-                                  setState(() {
-                                    _userType = value!;
-                                  });
-                                },
-                                dropdownMenuEntries: userTypes
-                                    .map<DropdownMenuEntry<String>>(
-                                        (String value) {
-                                  return DropdownMenuEntry<String>(
-                                    value: value,
-                                    label: value,
-                                    style: MenuItemButton.styleFrom(
-                                      textStyle: const TextStyle(
-                                        fontFamily: 'SF Pro Display',
-                                        fontStyle: FontStyle.normal,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 18.0,
-                                        height: 1.0,
-                                        color: AppColors.darkTextColor,
-                                      ),
-                                      foregroundColor: AppColors.primaryColor,
-                                    ),
-                                  );
-                                }).toList(),
-                              )
-                            ],
                           ),
                         ),
                         Align(
@@ -406,7 +366,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         Padding(
                           padding:
-                              const EdgeInsets.only(top: 50.0, bottom: 31.0),
+                              const EdgeInsets.only(top: 110.0, bottom: 31.0),
                           child: TextButton(
                             onPressed: () {
                               Navigator.of(context).pushNamedAndRemoveUntil(
