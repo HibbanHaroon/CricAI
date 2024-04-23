@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cricai/services/cloud/sessions/cloud_sessions.dart';
+import 'package:cricai/services/cloud/players/cloud_players.dart';
+import 'package:cricai/services/cloud/sessions/cloud_session.dart';
 import 'package:cricai/services/cloud/users/cloud_user.dart';
 import 'package:cricai/services/cloud/cloud_storage_constants.dart';
 import 'package:cricai/services/cloud/cloud_storage_exceptions.dart';
@@ -11,17 +12,20 @@ class FirebaseCloudStorage {
   //grabbing all the users from the collection 'users'
   final users = FirebaseFirestore.instance.collection('users');
   final sessions = FirebaseFirestore.instance.collection('sessions');
+  final players = FirebaseFirestore.instance.collection('players');
   final _videosStorage = FirebaseStorage.instance;
 
   Future<void> createUser({
     required String ownerUserId,
     required String name,
+    required String email,
     required String userType,
   }) async {
     try {
       await users.add({
         ownerUserIdFieldName: ownerUserId,
         nameFieldName: name,
+        emailFieldName: email,
         userTypeFieldName: userType,
       });
     } catch (e) {
@@ -49,14 +53,36 @@ class FirebaseCloudStorage {
     }
   }
 
+  Future<String> getUserIdByEmail({required String email}) async {
+    //get user id of the user with the given email
+    try {
+      var querySnapshot = await users
+          .where(
+            emailFieldName,
+            isEqualTo: email,
+          )
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        return CloudUser.fromSnapshot(querySnapshot.docs.first).ownerUserId;
+      } else {
+        throw CouldNotGetUserException();
+      }
+    } catch (e) {
+      throw CouldNotGetUserException();
+    }
+  }
+
   Future<void> updateUser({
     required String documentId,
     required String name,
+    required String email,
     required String userType,
   }) async {
     try {
       await users.doc(documentId).update({
         nameFieldName: name,
+        emailFieldName: email,
         userTypeFieldName: userType,
       });
     } catch (e) {
@@ -142,6 +168,27 @@ class FirebaseCloudStorage {
       throw CouldNotGetSessionException();
     }
   }
+
+  Future<String> addPlayer({
+    required String coachId,
+    required String playerId,
+  }) async {
+    try {
+      var docRef = await players.add({
+        coachIdFieldName: coachId,
+        playerIdFieldName: playerId,
+      });
+      return docRef.id;
+    } catch (e) {
+      throw CouldNotAddPlayerException();
+    }
+  }
+
+  Stream<List<CloudPlayer>> allPlayers({required String coachId}) =>
+      players.snapshots().map((event) => event.docs
+          .map((doc) => CloudPlayer.fromSnapshot(doc))
+          .where((player) => player.coachId == coachId)
+          .toList());
 
   static final FirebaseCloudStorage _shared =
       FirebaseCloudStorage._sharedInstance();

@@ -7,12 +7,14 @@ class CloudUser {
   final String documentId;
   final String ownerUserId;
   final String name;
+  final String email;
   final String userType;
 
   const CloudUser({
     required this.documentId,
     required this.ownerUserId,
     required this.name,
+    required this.email,
     required this.userType,
   });
 
@@ -21,5 +23,6 @@ class CloudUser {
       : documentId = snapshot.id,
         ownerUserId = snapshot.data()[ownerUserIdFieldName],
         name = snapshot.data()[nameFieldName] as String,
+        email = snapshot.data()[emailFieldName] as String,
         userType = snapshot.data()[userTypeFieldName] as String;
 }

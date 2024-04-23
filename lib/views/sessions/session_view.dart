@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:cricai/constants/colors.dart';
 import 'package:cricai/constants/routes.dart';
 import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
-import 'package:cricai/services/cloud/sessions/cloud_sessions.dart';
+import 'package:cricai/services/cloud/sessions/cloud_session.dart';
 import 'package:cricai/views/components/video_card.dart';
 import 'package:cricai/utilities/generics/get_arguments.dart';
 import 'package:flutter/material.dart';

@@ -4,7 +4,7 @@ import 'package:cricai/constants/colors.dart';
 import 'package:cricai/constants/routes.dart';
 import 'package:cricai/services/auth/auth_service.dart';
 import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
-import 'package:cricai/services/cloud/sessions/cloud_sessions.dart';
+import 'package:cricai/services/cloud/sessions/cloud_session.dart';
 import 'package:cricai/utilities/get_video_file.dart';
 import 'package:cricai/utilities/snackbar/success_snackbar.dart';
 import 'package:cricai/views/components/list_tile.dart';

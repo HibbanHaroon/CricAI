@@ -276,6 +276,7 @@ class _RegisterViewState extends State<RegisterView> {
                             await _usersService.createUser(
                               ownerUserId: userId,
                               name: name,
+                              email: email,
                               userType: _userType.toLowerCase(),
                             );
 

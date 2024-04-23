@@ -406,7 +406,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         Padding(
                           padding:
-                              const EdgeInsets.only(top: 110.0, bottom: 31.0),
+                              const EdgeInsets.only(top: 50.0, bottom: 31.0),
                           child: TextButton(
                             onPressed: () {
                               Navigator.of(context).pushNamedAndRemoveUntil(

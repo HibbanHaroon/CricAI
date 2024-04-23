@@ -3,7 +3,7 @@ import 'package:cricai/constants/routes.dart';
 import 'package:cricai/services/auth/auth_service.dart';
 import 'package:cricai/services/auth/auth_user.dart';
 import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
-import 'package:cricai/services/cloud/sessions/cloud_sessions.dart';
+import 'package:cricai/services/cloud/sessions/cloud_session.dart';
 import 'package:cricai/views/components/list_tile.dart';
 import 'package:flutter/material.dart';
 

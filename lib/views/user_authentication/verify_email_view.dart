@@ -31,7 +31,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
       if (user?.isEmailVerified ?? false) {
         //user's email is verified.
         Navigator.of(context).pushNamedAndRemoveUntil(
-          homeRoute,
+          pagesControllerRoute,
           (route) => false,
         );
         timer.cancel();
