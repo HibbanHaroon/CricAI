@@ -1,4 +1,5 @@
 import 'package:cricai/constants/colors.dart';
+import 'package:cricai/views/components/menu_button.dart';
 import 'package:flutter/material.dart';
 
 typedef SessionCallback<T> = void Function(T);
@@ -9,6 +10,7 @@ class CustomListTile<T> extends StatefulWidget {
   final Color leadingIconColor;
   final T item;
   final SessionCallback onTap;
+  final SessionCallback onDeleteSession;
 
   const CustomListTile({
     super.key,
@@ -17,6 +19,7 @@ class CustomListTile<T> extends StatefulWidget {
     required this.leadingIconColor,
     required this.item,
     required this.onTap,
+    required this.onDeleteSession,
   });
 
   @override
@@ -60,14 +63,9 @@ class _CustomListTileState extends State<CustomListTile> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            trailing: IconButton(
-              icon: const Icon(
-                Icons.more_vert,
-                color: AppColors.placeholderColor,
-              ),
-              onPressed: () {},
-              splashRadius: 24,
-              color: Colors.transparent,
+            trailing: MenuButton(
+              onDeleteSession: widget.onDeleteSession,
+              item: widget.item,
             ),
           ),
         ),

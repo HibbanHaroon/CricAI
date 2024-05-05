@@ -4,6 +4,7 @@ import 'package:cricai/services/auth/auth_user.dart';
 import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
 import 'package:cricai/services/cloud/players/cloud_players.dart';
 import 'package:cricai/services/cloud/users/cloud_user.dart';
+import 'package:cricai/utilities/dialogs/delete_dialog.dart';
 import 'package:cricai/views/components/list_tile.dart';
 import 'package:cricai/views/players/add_player_view.dart';
 import 'package:flutter/material.dart';
@@ -42,11 +43,11 @@ class _PlayersListViewState extends State<PlayersListView> {
         child: Column(
           children: [
             AddPlayerView(),
-            Padding(
-              padding: const EdgeInsets.only(
+            const Padding(
+              padding: EdgeInsets.only(
                 top: 14.0,
               ),
-              child: const Row(
+              child: Row(
                 children: [
                   Text(
                     'Players List',
@@ -95,11 +96,14 @@ class _PlayersListViewState extends State<PlayersListView> {
                                             Icons.format_list_bulleted_rounded,
                                         leadingIconColor:
                                             AppColors.primaryColor,
-                                        // onDeleteSession: (session) async {
-                                        //   await _playersService.deleteSession(
-                                        //     session.documentId);
-                                        //   );
-                                        // },
+                                        onDeleteSession: (player) async {
+                                          final shouldDelete =
+                                              await showDeleteDialog(context);
+                                          if (shouldDelete) {
+                                            await _playersService.deletePlayer(
+                                                documentId: player.documentId);
+                                          }
+                                        },
                                         item: player,
                                         onTap: (player) {
                                           /*Navigator.of(context).pushNamed(

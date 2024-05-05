@@ -4,6 +4,7 @@ import 'package:cricai/services/auth/auth_service.dart';
 import 'package:cricai/services/auth/auth_user.dart';
 import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
 import 'package:cricai/services/cloud/sessions/cloud_session.dart';
+import 'package:cricai/utilities/dialogs/delete_dialog.dart';
 import 'package:cricai/views/components/list_tile.dart';
 import 'package:flutter/material.dart';
 
@@ -63,18 +64,20 @@ class _SessionsListViewState extends State<SessionsListView> {
                         height: (screenHeight / 4) * 3,
                         child: ListView.builder(
                           itemCount: sessions.length,
-                          // shrinkWrap: true,
                           itemBuilder: (context, index) {
                             final session = sessions.elementAt(index);
                             return CustomListTile<CloudSession>(
                               title: session.name,
                               leadingIcon: Icons.format_list_bulleted_rounded,
                               leadingIconColor: AppColors.primaryColor,
-                              // onDeleteSession: (session) async {
-                              //   await _sessionsService.deleteSession(
-                              //     session.documentId);
-                              //   );
-                              // },
+                              onDeleteSession: (session) async {
+                                final shouldDelete =
+                                    await showDeleteDialog(context);
+                                if (shouldDelete) {
+                                  await _sessionsService.deleteSession(
+                                      documentId: session.documentId);
+                                }
+                              },
                               item: session,
                               onTap: (session) {
                                 Navigator.of(context).pushNamed(
@@ -86,20 +89,6 @@ class _SessionsListViewState extends State<SessionsListView> {
                           },
                         ),
                       );
-
-                      // return NotesListView(
-                      //   notes: allNotes,
-                      //   onDeleteNote: (note) async {
-                      //     await _notesService.deleteNote(
-                      //         documentId: note.documentId);
-                      //   },
-                      //   onTap: (note) {
-                      //     Navigator.of(context).pushNamed(
-                      //       createOrUpdateNoteRoute,
-                      //       arguments: note,
-                      //     );
-                      //   },
-                      // );
                     } else {
                       //return const CircularProgressIndicator();
                       // print(snapshot.data);

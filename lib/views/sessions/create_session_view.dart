@@ -245,6 +245,19 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                                 onTap: (video) {
                                   // New Page to display the video
                                 },
+                                onDeleteSession: (video) {
+                                  setState(() {
+                                    for (int i = 0;
+                                        i < _videoArray.length;
+                                        i++) {
+                                      if (_videoArray[i]['raw_video_url'] ==
+                                          video.path) {
+                                        _videoArray.removeAt(i);
+                                        break;
+                                      }
+                                    }
+                                  });
+                                },
                               );
                             },
                           ),

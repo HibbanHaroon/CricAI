@@ -150,6 +150,16 @@ class FirebaseCloudStorage {
     }
   }
 
+  Future<void> deleteSession({
+    required String documentId,
+  }) async {
+    try {
+      await sessions.doc(documentId).delete();
+    } catch (e) {
+      throw CouldNotDeleteSessionException();
+    }
+  }
+
   Future<CloudSession> getSession({
     required String ownerUserId,
     required String documentId,
@@ -181,6 +191,16 @@ class FirebaseCloudStorage {
       return docRef.id;
     } catch (e) {
       throw CouldNotAddPlayerException();
+    }
+  }
+
+  Future<void> deletePlayer({
+    required String documentId,
+  }) async {
+    try {
+      await players.doc(documentId).delete();
+    } catch (e) {
+      throw CouldNotDeletePlayerException();
     }
   }
 
