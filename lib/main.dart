@@ -2,7 +2,7 @@ import 'dart:developer' as devtools show log;
 import 'package:cricai/services/auth/auth_service.dart';
 import 'package:cricai/views/page_controller.dart';
 import 'package:cricai/views/players/players_list_view.dart';
-import 'package:cricai/views/sessions/create_session_view.dart';
+import 'package:cricai/views/sessions/create_update_session_view.dart';
 import 'package:cricai/views/sessions/session_view.dart';
 import 'package:cricai/views/sessions/sessions_list_view.dart';
 import 'package:cricai/views/sessions/view_result.dart';
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         pagesControllerRoute: (context) => const PagesController(),
         homeRoute: (context) => const HomeView(),
         sessionsListRoute: (context) => const SessionsListView(),
-        createSessionRoute: (context) => const CreateSessionView(),
+        createUpdateSessionRoute: (context) => const CreateUpdateSessionView(),
         sessionRoute: (context) => const SessionView(),
         viewResultRoute: (context) => const ResultView(),
         playersListRoute: (context) => const PlayersListView(),

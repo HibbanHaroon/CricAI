@@ -1,5 +1,6 @@
 import 'package:cricai/constants/colors.dart';
 import 'package:cricai/constants/routes.dart';
+import 'package:cricai/enums/menu_action.dart';
 import 'package:cricai/services/auth/auth_service.dart';
 import 'package:cricai/services/auth/auth_user.dart';
 import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
@@ -70,7 +71,7 @@ class _SessionsListViewState extends State<SessionsListView> {
                               title: session.name,
                               leadingIcon: Icons.format_list_bulleted_rounded,
                               leadingIconColor: AppColors.primaryColor,
-                              onDeleteSession: (session) async {
+                              onDelete: (session) async {
                                 final shouldDelete =
                                     await showDeleteDialog(context);
                                 if (shouldDelete) {
@@ -78,6 +79,16 @@ class _SessionsListViewState extends State<SessionsListView> {
                                       documentId: session.documentId);
                                 }
                               },
+                              onEdit: (session) {
+                                Navigator.of(context).pushNamed(
+                                  createUpdateSessionRoute,
+                                  arguments: session,
+                                );
+                              },
+                              actions: const [
+                                MenuAction.edit,
+                                MenuAction.delete
+                              ],
                               item: session,
                               onTap: (session) {
                                 Navigator.of(context).pushNamed(

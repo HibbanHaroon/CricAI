@@ -103,7 +103,8 @@ class _PagesControllerState extends State<PagesController> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).pushNamed(
-            createSessionRoute,
+            createUpdateSessionRoute,
+            arguments: null,
           );
         },
         tooltip: 'Add',

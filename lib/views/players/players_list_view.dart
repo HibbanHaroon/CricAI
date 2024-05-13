@@ -1,4 +1,5 @@
 import 'package:cricai/constants/colors.dart';
+import 'package:cricai/enums/menu_action.dart';
 import 'package:cricai/services/auth/auth_service.dart';
 import 'package:cricai/services/auth/auth_user.dart';
 import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
@@ -96,7 +97,7 @@ class _PlayersListViewState extends State<PlayersListView> {
                                             Icons.format_list_bulleted_rounded,
                                         leadingIconColor:
                                             AppColors.primaryColor,
-                                        onDeleteSession: (player) async {
+                                        onDelete: (player) async {
                                           final shouldDelete =
                                               await showDeleteDialog(context);
                                           if (shouldDelete) {
@@ -104,6 +105,8 @@ class _PlayersListViewState extends State<PlayersListView> {
                                                 documentId: player.documentId);
                                           }
                                         },
+                                        onEdit: null,
+                                        actions: const [MenuAction.delete],
                                         item: player,
                                         onTap: (player) {
                                           /*Navigator.of(context).pushNamed(

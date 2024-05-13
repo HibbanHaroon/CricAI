@@ -5,12 +5,16 @@ import 'package:flutter/material.dart';
 typedef SessionCallback<T> = void Function(T);
 
 class MenuButton<T> extends StatefulWidget {
-  final SessionCallback onDeleteSession;
+  final SessionCallback? onDelete;
+  final SessionCallback? onEdit;
+  final List<MenuAction> actions;
   final T item;
 
   const MenuButton({
     super.key,
-    required this.onDeleteSession,
+    required this.onDelete,
+    required this.onEdit,
+    required this.actions,
     required this.item,
   });
 
@@ -29,44 +33,53 @@ class _MenuButtonState extends State<MenuButton> {
       onSelected: (value) {
         switch (value) {
           case MenuAction.edit:
-            // add desired output
+            widget.onEdit?.call(widget.item);
             break;
           case MenuAction.delete:
-            widget.onDeleteSession(widget.item);
+            widget.onDelete?.call(widget.item);
             break;
         }
       },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<MenuAction>>[
-        const PopupMenuItem<MenuAction>(
-          value: MenuAction.edit,
-          child: Row(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(right: 8.0),
-                child: Icon(Icons.create_rounded),
-              ),
-              Text(
-                'Edit',
-                style: TextStyle(fontSize: 15),
-              ),
-            ],
+      itemBuilder: (BuildContext context) {
+        List<PopupMenuEntry<MenuAction>> items = [];
+
+        for (var action in widget.actions) {
+          switch (action) {
+            case MenuAction.edit:
+              if (widget.onEdit != null) {
+                items.add(_buildMenuItem(action, Icons.create_rounded, 'Edit'));
+              }
+              break;
+            case MenuAction.delete:
+              if (widget.onDelete != null) {
+                items.add(_buildMenuItem(action, Icons.delete, 'Delete'));
+              }
+              break;
+            // Handle other menu actions here if needed
+          }
+        }
+
+        return items;
+      },
+    );
+  }
+
+  PopupMenuItem<MenuAction> _buildMenuItem(
+      MenuAction action, IconData icon, String text) {
+    return PopupMenuItem<MenuAction>(
+      value: action,
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Icon(icon),
           ),
-        ),
-        const PopupMenuItem(
-          value: MenuAction.delete,
-          child: Row(
-            children: [
-              Padding(
-                  padding: EdgeInsets.only(right: 8.0),
-                  child: Icon(Icons.delete)),
-              Text(
-                'Delete',
-                style: TextStyle(fontSize: 15),
-              ),
-            ],
+          Text(
+            text,
+            style: const TextStyle(fontSize: 15),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
