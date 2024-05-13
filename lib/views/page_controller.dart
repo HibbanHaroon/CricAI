@@ -28,7 +28,7 @@ class _PagesControllerState extends State<PagesController> {
     _usersService = FirebaseCloudStorage();
     _currentIndex = 0;
     _pages = [
-      const HomeView(),
+      _buildHomeView(),
       const SessionsListView(),
       const ProfileView(),
     ];
@@ -54,7 +54,7 @@ class _PagesControllerState extends State<PagesController> {
           setState(() {
             _pages = userType == 'coach'
                 ? [
-                    const HomeView(),
+                    _buildHomeView(),
                     const SessionsListView(),
                     const PlayersListView(),
                     const ProfileView(),
@@ -93,6 +93,16 @@ class _PagesControllerState extends State<PagesController> {
     final user = await _usersService.getUser(ownerUserId: currentUser.id);
     final userType = user.userType;
     return userType;
+  }
+
+  Widget _buildHomeView() {
+    return HomeView(
+      changePageIndex: (index) {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+    );
   }
 
   @override

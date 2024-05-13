@@ -137,6 +137,21 @@ class FirebaseCloudStorage {
           .where((session) => session.ownerUserId == ownerUserId)
           .toList());
 
+  Stream<List<CloudSession>> recentSessions({required String ownerUserId}) {
+    // Get a stream of snapshots of sessions ordered by timestamp in descending order
+    var orderedSnapshots =
+        sessions.orderBy('time', descending: true).snapshots();
+
+    var query = orderedSnapshots.map((event) => event.docs
+        .map((doc) => CloudSession.fromSnapshot(doc))
+        .where((session) => session.ownerUserId == ownerUserId)
+        // Take only the first three sessions
+        .take(3)
+        .toList());
+
+    return query;
+  }
+
   Future<void> updateSession({
     required String documentId,
     required String name,

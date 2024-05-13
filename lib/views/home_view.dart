@@ -1,24 +1,29 @@
 import 'package:cricai/constants/colors.dart';
+import 'package:cricai/constants/routes.dart';
 import 'package:cricai/services/auth/auth_service.dart';
+import 'package:cricai/services/cloud/sessions/cloud_session.dart';
 import 'package:cricai/services/cloud/users/cloud_user.dart';
 import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
+import 'package:cricai/views/components/session_card.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+  final Function(int) changePageIndex;
+  const HomeView({super.key, required this.changePageIndex});
 
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
-  late final FirebaseCloudStorage _usersService;
+  late final FirebaseCloudStorage _firebaseService;
   final currentUser = AuthService.firebase().currentUser!;
+  String get userId => currentUser.id;
 
   @override
   void initState() {
-    _usersService = FirebaseCloudStorage();
+    _firebaseService = FirebaseCloudStorage();
     super.initState();
   }
 
@@ -55,8 +60,8 @@ class _HomeViewState extends State<HomeView> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       FutureBuilder(
-                        future:
-                            _usersService.getUser(ownerUserId: currentUser.id),
+                        future: _firebaseService.getUser(
+                            ownerUserId: currentUser.id),
                         builder: (context, snapshot) {
                           switch (snapshot.connectionState) {
                             case ConnectionState.done:
@@ -99,7 +104,10 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          // Changing the page index of the bottom nav bar to 1 to display the session list
+                          widget.changePageIndex(1);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.lightPrimaryColor,
                           shape: RoundedRectangleBorder(
@@ -130,146 +138,47 @@ class _HomeViewState extends State<HomeView> {
                       )
                     ],
                   ),
-                  Card(
-                    elevation: 3,
-                    color: AppColors.lightBackgroundColor,
-                    surfaceTintColor: Colors.transparent,
-                    margin: const EdgeInsets.only(
-                      top: 15.0,
-                      bottom: 5.0,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                    child: Column(
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(25),
-                            topLeft: Radius.circular(25),
-                          ),
-                          child: Image.asset(
-                            'assets/images/session.png',
-                            height: 200,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          ),
-                        ),
-                        const ListTile(
-                          title: Text(
-                            'Al-Amar Stadium Session',
-                            style: TextStyle(
-                              color: AppColors.darkTextColor,
-                              fontFamily: 'SF Pro Display',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 18,
-                            ),
-                          ),
-                          subtitle: Text(
-                            '18th December, 2023',
-                            style: TextStyle(
-                              color: AppColors.darkTextColor,
-                              fontFamily: 'SF Pro Display',
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Card(
-                    elevation: 3,
-                    color: AppColors.lightBackgroundColor,
-                    surfaceTintColor: Colors.transparent,
-                    margin: const EdgeInsets.only(
-                      top: 15.0,
-                      bottom: 5.0,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                    child: Column(
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(25),
-                            topLeft: Radius.circular(25),
-                          ),
-                          child: Image.asset(
-                            'assets/images/session.png',
-                            height: 200,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          ),
-                        ),
-                        const ListTile(
-                          title: Text(
-                            'Al-Amar Stadium Session',
-                            style: TextStyle(
-                              color: AppColors.darkTextColor,
-                              fontFamily: 'SF Pro Display',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 18,
-                            ),
-                          ),
-                          subtitle: Text(
-                            '18th December, 2023',
-                            style: TextStyle(
-                              color: AppColors.darkTextColor,
-                              fontFamily: 'SF Pro Display',
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Card(
-                    elevation: 3,
-                    color: AppColors.lightBackgroundColor,
-                    surfaceTintColor: Colors.transparent,
-                    margin: const EdgeInsets.only(
-                      top: 15.0,
-                      bottom: 5.0,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                    child: Column(
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(25),
-                            topLeft: Radius.circular(25),
-                          ),
-                          child: Image.asset(
-                            'assets/images/session.png',
-                            height: 200,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          ),
-                        ),
-                        const ListTile(
-                          title: Text(
-                            'Al-Amar Stadium Session',
-                            style: TextStyle(
-                              color: AppColors.darkTextColor,
-                              fontFamily: 'SF Pro Display',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 18,
-                            ),
-                          ),
-                          subtitle: Text(
-                            '18th December, 2023',
-                            style: TextStyle(
-                              color: AppColors.darkTextColor,
-                              fontFamily: 'SF Pro Display',
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  StreamBuilder(
+                    stream:
+                        _firebaseService.recentSessions(ownerUserId: userId),
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                        case ConnectionState.active:
+                          if (snapshot.hasData) {
+                            final sessions =
+                                snapshot.data as List<CloudSession>;
+
+                            return SizedBox(
+                              child: ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: sessions.length,
+                                itemBuilder: (context, index) {
+                                  final session = sessions.elementAt(index);
+                                  return SessionCard(
+                                    name: session.name,
+                                    time: session.time,
+                                    item: session,
+                                    onTap: (session) {
+                                      Navigator.of(context).pushNamed(
+                                        sessionRoute,
+                                        arguments: session,
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            );
+                          } else {
+                            //return const CircularProgressIndicator();
+                            // print(snapshot.data);
+                            return const Text('No Sessions yet.');
+                          }
+                        default:
+                          return const CircularProgressIndicator();
+                      }
+                    },
                   ),
                 ],
               ),
