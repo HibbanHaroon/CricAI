@@ -114,6 +114,7 @@ class FirebaseCloudStorage {
   Future<String> createSession({
     required String ownerUserId,
     required String name,
+    required String shotType,
     required List<dynamic> videos,
   }) async {
     try {
@@ -121,6 +122,7 @@ class FirebaseCloudStorage {
         ownerUserIdFieldName: ownerUserId,
         nameFieldName: name,
         timeFieldName: FieldValue.serverTimestamp(),
+        shotTypeFieldName: shotType,
         videosFieldName: videos,
       });
       return docRef.id;
@@ -138,11 +140,13 @@ class FirebaseCloudStorage {
   Future<void> updateSession({
     required String documentId,
     required String name,
+    required String shotType,
     required List<dynamic> videos,
   }) async {
     try {
       await sessions.doc(documentId).update({
         nameFieldName: name,
+        shotTypeFieldName: shotType,
         videosFieldName: videos,
       });
     } catch (e) {

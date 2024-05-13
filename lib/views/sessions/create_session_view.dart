@@ -5,8 +5,10 @@ import 'package:cricai/constants/routes.dart';
 import 'package:cricai/services/auth/auth_service.dart';
 import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
 import 'package:cricai/services/cloud/sessions/cloud_session.dart';
+import 'package:cricai/services/cloud/sessions/shot_types.dart';
 import 'package:cricai/utilities/get_video_file.dart';
 import 'package:cricai/utilities/snackbar/success_snackbar.dart';
+import 'package:cricai/views/components/dropdown_menu.dart';
 import 'package:cricai/views/components/list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -24,12 +26,14 @@ class _CreateSessionViewState extends State<CreateSessionView> {
   late final TextEditingController _sessionName;
   late List<dynamic> _videoArray;
   late bool _isLoading;
+  late String _shotType;
 
   @override
   void initState() {
     _sessionsService = FirebaseCloudStorage();
     _sessionName = TextEditingController();
     _videoArray = [];
+    _shotType = shotTypes.first;
     _isLoading = false;
     super.initState();
   }
@@ -42,6 +46,7 @@ class _CreateSessionViewState extends State<CreateSessionView> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -111,6 +116,38 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                           height: 1.0,
                           color: AppColors.darkTextColor,
                         ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10.0,
+                    ),
+                    const Row(
+                      children: [
+                        Text(
+                          'Shot Type',
+                          style: TextStyle(
+                            color: AppColors.darkTextColor,
+                            fontFamily: 'SF Pro Display',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 14.0,
+                      ),
+                      child: CustomDropdownMenu(
+                        width: screenWidth - ((9 * screenWidth) / 70),
+                        initialSelection: _shotType,
+                        label: "Shot Type",
+                        onSelected: (String? value) {
+                          setState(() {
+                            _shotType = value!;
+                          });
+                        },
+                        types: shotTypes,
                       ),
                     ),
                     const Padding(
@@ -228,7 +265,7 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                     Padding(
                       padding: const EdgeInsets.only(top: 5.0),
                       child: SizedBox(
-                        height: 255.0,
+                        height: 130.0,
                         child: Scrollbar(
                           thumbVisibility: true,
                           child: ListView.builder(
@@ -282,6 +319,7 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                           var documentId = await _sessionsService.createSession(
                             ownerUserId: userId,
                             name: name,
+                            shotType: _shotType,
                             videos: [],
                           );
 
@@ -301,6 +339,7 @@ class _CreateSessionViewState extends State<CreateSessionView> {
                           await _sessionsService.updateSession(
                             documentId: documentId,
                             name: name,
+                            shotType: _shotType,
                             videos: _videoArray,
                           );
 

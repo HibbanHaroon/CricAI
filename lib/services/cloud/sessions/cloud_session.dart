@@ -8,6 +8,7 @@ class CloudSession {
   final String ownerUserId;
   final String name;
   final Timestamp time;
+  final String shotType;
   final List<dynamic> videos;
 
   const CloudSession({
@@ -15,6 +16,7 @@ class CloudSession {
     required this.ownerUserId,
     required this.name,
     required this.time,
+    required this.shotType,
     required this.videos,
   });
 
@@ -25,6 +27,7 @@ class CloudSession {
         ownerUserId = snapshot.data()[ownerUserIdFieldName],
         name = snapshot.data()[nameFieldName] as String,
         time = snapshot.data()[timeFieldName] as Timestamp,
+        shotType = snapshot.data()[shotTypeFieldName] as String,
         videos = snapshot.data()[videosFieldName] as List<dynamic>;
 
   CloudSession.fromDocumentSnapshot(DocumentSnapshot snapshot)
@@ -32,5 +35,6 @@ class CloudSession {
         ownerUserId = snapshot.get(ownerUserIdFieldName),
         name = snapshot.get(nameFieldName) as String,
         time = snapshot.get(timeFieldName) as Timestamp,
+        shotType = snapshot.get(shotTypeFieldName) as String,
         videos = snapshot.get(videosFieldName) as List<dynamic>;
 }

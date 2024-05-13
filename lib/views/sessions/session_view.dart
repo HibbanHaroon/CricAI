@@ -186,12 +186,13 @@ class _SessionViewState extends State<SessionView> {
                                 if (_isGenerationDisabled == false) {
                                   for (var i = 0; i < videos.length; i++) {
                                     var sessionId = session.documentId;
+                                    var shotType = session.shotType;
                                     var videoName = videos[i]['name'];
                                     var rawVideoUrl =
                                         videos[i]['raw_video_url'];
 
                                     var apiUrl =
-                                        'http://192.168.18.232:8000/?url=$rawVideoUrl&sessionId=$sessionId&videoName=$videoName';
+                                        'http://192.168.18.232:8000/?url=$rawVideoUrl&sessionId=$sessionId&videoName=$videoName&shotType=$shotType';
                                     apiUrl = Uri.encodeFull(apiUrl);
 
                                     var response =
@@ -219,6 +220,7 @@ class _SessionViewState extends State<SessionView> {
                                   await _sessionsService.updateSession(
                                     documentId: session.documentId,
                                     name: session.name,
+                                    shotType: session.shotType,
                                     videos: videos,
                                   );
                                 }

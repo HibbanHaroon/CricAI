@@ -4,6 +4,7 @@ import 'package:cricai/services/auth/auth_exceptions.dart';
 import 'package:cricai/services/auth/auth_service.dart';
 import 'package:cricai/services/cloud/firebase_cloud_storage.dart';
 import 'package:cricai/utilities/snackbar/error_snackbar.dart';
+import 'package:cricai/views/components/dropdown_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:cricai/constants/routes.dart';
 import 'package:cricai/services/cloud/users/user_types.dart';
@@ -217,38 +218,21 @@ class _RegisterViewState extends State<RegisterView> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
-                          top: 14.0, left: 7.0, right: 7.0, bottom: 0.0),
-                      child: Row(
-                        children: <Widget>[
-                          DropdownMenu<String>(
-                            width: screenWidth - ((9 * screenWidth) / 100),
-                            initialSelection: _userType,
-                            label: const Text('User Type'),
-                            onSelected: (String? value) {
-                              setState(() {
-                                _userType = value!;
-                              });
-                            },
-                            dropdownMenuEntries: userTypes
-                                .map<DropdownMenuEntry<String>>((String value) {
-                              return DropdownMenuEntry<String>(
-                                value: value,
-                                label: value,
-                                style: MenuItemButton.styleFrom(
-                                  textStyle: const TextStyle(
-                                    fontFamily: 'SF Pro Display',
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 18.0,
-                                    height: 1.0,
-                                    color: AppColors.darkTextColor,
-                                  ),
-                                  foregroundColor: AppColors.primaryColor,
-                                ),
-                              );
-                            }).toList(),
-                          )
-                        ],
+                        top: 14.0,
+                        left: 7.0,
+                        right: 7.0,
+                        bottom: 0.0,
+                      ),
+                      child: CustomDropdownMenu(
+                        width: screenWidth - ((9 * screenWidth) / 100),
+                        initialSelection: _userType,
+                        label: "User Type",
+                        onSelected: (String? value) {
+                          setState(() {
+                            _userType = value!;
+                          });
+                        },
+                        types: userTypes,
                       ),
                     ),
                     Padding(
