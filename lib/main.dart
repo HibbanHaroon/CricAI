@@ -11,6 +11,7 @@ import 'package:cricai/views/user_authentication/forgot_password_view.dart';
 import 'package:cricai/views/user_authentication/login_view.dart';
 import 'package:cricai/views/user_authentication/register_view.dart';
 import 'package:cricai/views/splash.dart';
+import 'package:cricai/views/sessions/video_player.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         createUpdateSessionRoute: (context) => const CreateUpdateSessionView(),
         sessionRoute: (context) => const SessionView(),
         viewResultRoute: (context) => const ResultView(),
+        videoPlayerRoute: (context) => const VideoPlayer(),
       },
     );
   }

@@ -300,7 +300,10 @@ class _CreateUpdateSessionViewState extends State<CreateUpdateSessionView> {
                                 leadingIconColor: const Color(0xFFFA5F3B),
                                 item: video,
                                 onTap: (video) {
-                                  // New Page to display the video
+                                  Navigator.of(context).pushNamed(
+                                    videoPlayerRoute,
+                                    arguments: video.path as String,
+                                  );
                                 },
                                 onDelete: (video) {
                                   setState(() {

@@ -10,3 +10,4 @@ const pagesControllerRoute = '/pagesController/';
 const createUpdateSessionRoute = '/sessions/createUpdateSession/';
 const sessionRoute = '/sessions/session/';
 const viewResultRoute = '/sessions/viewResult/';
+const videoPlayerRoute = '/sessions/videoPlayer/';
