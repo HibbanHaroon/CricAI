@@ -204,14 +204,17 @@ class _SessionViewState extends State<SessionView> {
 
                                     var comparedAngles =
                                         jsonResponse['compared_angles'];
+                                    var feedback = jsonResponse['feedback'];
                                     var analysisVideoUrl =
                                         jsonResponse['analysis_video_url'];
 
                                     print(comparedAngles);
+                                    print(feedback);
                                     print(analysisVideoUrl);
 
                                     videos[i]['compared_angles'] =
                                         comparedAngles;
+                                    videos[i]['feedback'] = feedback;
                                     videos[i]['analysis_video_url'] =
                                         analysisVideoUrl;
                                   }

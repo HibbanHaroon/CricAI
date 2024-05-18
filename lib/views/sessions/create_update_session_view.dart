@@ -202,7 +202,8 @@ class _CreateUpdateSessionViewState extends State<CreateUpdateSessionView> {
                                   'name': videoFile.name,
                                   'raw_video_url': videoFile.path,
                                   'analysis_video_url': '',
-                                  'compared_angles': ''
+                                  'compared_angles': '',
+                                  'feedback': ''
                                 });
                               });
                             },
@@ -240,7 +241,8 @@ class _CreateUpdateSessionViewState extends State<CreateUpdateSessionView> {
                                   'name': videoFile.name,
                                   'raw_video_url': videoFile.path,
                                   'analysis_video_url': '',
-                                  'compared_angles': ''
+                                  'compared_angles': '',
+                                  'feedback': ''
                                 });
                               });
                             },
