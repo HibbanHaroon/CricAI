@@ -10,7 +10,7 @@ load_dotenv()
 
 def get_saved_video_url(sessionId: str, videoName: str):
     service_account_str = os.getenv("SERVICE_ACCOUNT")
-    service_account_obj = json.loads(service_account_str)
+    service_account_obj = json.loads(service_account_str, strict=False)
 
     if not firebase_admin._apps:
         cred = credentials.Certificate(service_account_obj)
