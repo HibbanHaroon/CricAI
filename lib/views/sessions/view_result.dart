@@ -44,9 +44,11 @@ class _ResultViewState extends State<ResultView> {
   final FlutterFFmpeg _flutterFFmpeg = FlutterFFmpeg();
   late int totalFrames;
   late int currentFrame;
+  late ScrollController _scrollController;
 
   @override
   void initState() {
+    _scrollController = ScrollController();
     totalFrames = 0;
     currentFrame = 1;
     super.initState();
@@ -55,6 +57,7 @@ class _ResultViewState extends State<ResultView> {
   @override
   void dispose() {
     super.dispose();
+    _scrollController.dispose();
     _deleteVideoAndFrames();
   }
 
@@ -112,6 +115,27 @@ class _ResultViewState extends State<ResultView> {
     }
 
     Directory(outputDir).delete(recursive: true);
+  }
+
+  void _scrollToIndex(int index) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double itemWidth = 110; // 100 (item width) + 10 (margin)
+    double scrollPosition =
+        (index * itemWidth) - (screenWidth / 2) + (itemWidth / 2);
+
+    if (scrollPosition < 0) {
+      scrollPosition = 0;
+    }
+
+    if (scrollPosition > _scrollController.position.maxScrollExtent) {
+      scrollPosition = _scrollController.position.maxScrollExtent;
+    }
+
+    _scrollController.animateTo(
+      scrollPosition,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
@@ -221,8 +245,7 @@ class _ResultViewState extends State<ResultView> {
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   _buildAnalysisView(video['compared_angles']),
-                                  _buildFrameView(
-                                      localFrames[currentFrame - 1]),
+                                  _buildFrameView(localFrames),
                                   Column(
                                     children: [
                                       _buildFrameScrollBar(localFrames),
@@ -614,7 +637,7 @@ class _ResultViewState extends State<ResultView> {
         anglesArray[(currentFrame - 1).toString()] == null) {
       return const SizedBox();
     }
-    return Container(
+    return SizedBox(
       height: 100,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -624,11 +647,15 @@ class _ResultViewState extends State<ResultView> {
             (index) {
               if (anglesArray[(currentFrame - 1).toString()][index] != null) {
                 return Container(
-                  margin: EdgeInsets.all(5),
+                  margin: const EdgeInsets.all(5),
                   width: 100,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: AppColors.lightPrimaryColor,
+                      color: anglesArray[(currentFrame - 1).toString()][index]
+                                  ["is_deviation"] ==
+                              'OK'
+                          ? AppColors.lightPrimaryColor
+                          : AppColors.redLightColor,
                       width: 1,
                     ),
                   ),
@@ -643,7 +670,7 @@ class _ResultViewState extends State<ResultView> {
                   ),
                 );
               } else {
-                return SizedBox();
+                return const SizedBox();
               }
             },
           ),
@@ -652,48 +679,67 @@ class _ResultViewState extends State<ResultView> {
     );
   }
 
-  Widget _buildFrameView(File frame) {
-    return Container(
-      height: MediaQuery.of(context).size.height / 3,
-      child: Image.file(
-        frame,
-        fit: BoxFit.contain,
+  Widget _buildFrameView(List<File> frames) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height / 2.7,
+      child: PageView.builder(
+        itemCount: frames.length,
+        controller: PageController(initialPage: currentFrame - 1),
+        onPageChanged: (index) {
+          setState(() {
+            currentFrame = index + 1;
+          });
+          _scrollToIndex(index);
+        },
+        itemBuilder: (context, index) {
+          return Image.file(
+            frames[index],
+            fit: BoxFit.cover,
+          );
+        },
       ),
     );
   }
 
   Widget _buildFrameScrollBar(List<File> localFrames) {
-    return Container(
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToIndex(currentFrame - 1);
+    });
+
+    return SizedBox(
       height: 100,
-      child: SingleChildScrollView(
+      child: ListView.builder(
+        controller: _scrollController,
         scrollDirection: Axis.horizontal,
-        child: Row(
-          children: List.generate(localFrames.length, (index) {
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  currentFrame = index + 1;
-                });
-              },
-              child: Container(
-                margin: EdgeInsets.all(5),
-                width: 100,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: currentFrame == index + 1
-                        ? AppColors.lightPrimaryColor
-                        : AppColors.darkTextColor,
-                    width: 2,
-                  ),
-                ),
-                child: Image.file(
-                  localFrames[currentFrame - 1],
-                  fit: BoxFit.cover,
+        itemCount: localFrames.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                currentFrame = index + 1;
+              });
+              _scrollToIndex(index);
+            },
+            child: Container(
+              margin: const EdgeInsets.all(5),
+              width: 100,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: currentFrame == index + 1
+                      ? AppColors.lightPrimaryColor
+                      : AppColors.darkTextColor,
+                  width: 2,
                 ),
               ),
-            );
-          }),
-        ),
+              child: Image.file(
+                localFrames[
+                    index], // Use the current index to display the thumbnail
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
