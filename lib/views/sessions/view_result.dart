@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cricai/constants/colors.dart';
+import 'package:cricai/services/cloud/sessions/shot_video_ids.dart';
 import 'package:cricai/utilities/calculate_score.dart';
 import 'package:cricai/utilities/full_circle_painter.dart';
 import 'package:cricai/utilities/generics/get_arguments.dart';
@@ -19,12 +20,13 @@ class ResultView extends StatefulWidget {
   _ResultViewState createState() => _ResultViewState();
 }
 
-Future<dynamic> getVideo(BuildContext context) async {
-  return context.getArgument<dynamic>()!;
+Future<dynamic> getVideoAndShotType(BuildContext context) async {
+  return context.getArgument<Map<String, dynamic>>()!;
 }
 
 class _ResultViewState extends State<ResultView> {
   late dynamic video;
+  late String shotType;
   late List<String> angleNames = [
     'Right Shoulder',
     'Left Shoulder',
@@ -163,11 +165,12 @@ class _ResultViewState extends State<ResultView> {
                   width: MediaQuery.of(context).size.width,
                   // Future Builder here
                   child: FutureBuilder(
-                      future: getVideo(context),
+                      future: getVideoAndShotType(context),
                       builder: (context, snapshot) {
                         switch (snapshot.connectionState) {
                           case ConnectionState.done:
-                            video = snapshot.data as dynamic;
+                            video = snapshot.data['video'] as dynamic;
+                            shotType = snapshot.data['shotType'] as String;
                             Map<String, dynamic> feedback = video['feedback'];
                             return Column(
                               children: [
@@ -175,35 +178,7 @@ class _ResultViewState extends State<ResultView> {
                                 _buildScoreView(feedback),
                                 _buildAreasOfDeviationView(feedback),
                                 _buildOverallFeedbackView(feedback),
-                                // const Padding(
-                                //   padding: EdgeInsets.only(
-                                //     top: 20.0,
-                                //     left: 8.0,
-                                //   ),
-                                //   child: Row(
-                                //     children: [
-                                //       Column(
-                                //         crossAxisAlignment:
-                                //             CrossAxisAlignment.start,
-                                //         children: [
-                                //           Text(
-                                //             'Example Shot',
-                                //             style: TextStyle(
-                                //               color: AppColors.darkTextColor,
-                                //               fontFamily: 'SF Pro Display',
-                                //               fontWeight: FontWeight.w600,
-                                //               fontSize: 22,
-                                //             ),
-                                //           ),
-                                //           SizedBox(height: 12),
-                                //           VideoPlayer(
-                                //             id: 'i5v2YgHuTSE',
-                                //           ),
-                                //         ],
-                                //       )
-                                //     ],
-                                //   ),
-                                // ),
+                                _buildExampleShotView(shotType),
                               ],
                             );
                           default:
@@ -219,11 +194,12 @@ class _ResultViewState extends State<ResultView> {
                 Expanded(
                   child: Center(
                     child: FutureBuilder(
-                      future: getVideo(context),
+                      future: getVideoAndShotType(context),
                       builder: (context, snapshot) {
                         switch (snapshot.connectionState) {
                           case ConnectionState.done:
-                            video = snapshot.data as dynamic;
+                            video = snapshot.data['video'] as dynamic;
+                            shotType = snapshot.data['shotType'] as String;
                           default:
                             const CircularProgressIndicator();
                         }
@@ -587,6 +563,50 @@ class _ResultViewState extends State<ResultView> {
   }
 
   // Build function for Example Shot
+  Widget _buildExampleShotView(String shotType) {
+    String videoID = shotVideoIDs[shotType]!;
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 20.0,
+        left: 8.0,
+      ),
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Text(
+                    'Example Shot : ',
+                    style: TextStyle(
+                      color: AppColors.darkTextColor,
+                      fontFamily: 'SF Pro Display',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 22,
+                    ),
+                  ),
+                  Text(
+                    shotType,
+                    style: const TextStyle(
+                      color: AppColors.darkTextColor,
+                      fontFamily: 'SF Pro Display',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 22,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              VideoPlayer(
+                id: videoID,
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
 
   // Analysis Widgets start from here.
   Widget _buildAnalysisView(anglesArray) {
@@ -633,9 +653,12 @@ class _ResultViewState extends State<ResultView> {
   }
 
   Widget _buildFrameView(File frame) {
-    return Image.file(
-      frame,
-      fit: BoxFit.contain,
+    return Container(
+      height: MediaQuery.of(context).size.height / 3,
+      child: Image.file(
+        frame,
+        fit: BoxFit.contain,
+      ),
     );
   }
 

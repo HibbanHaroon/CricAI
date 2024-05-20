@@ -156,7 +156,10 @@ class _SessionViewState extends State<SessionView> {
                                 onTap: (video) {
                                   Navigator.of(context).pushNamed(
                                     viewResultRoute,
-                                    arguments: video,
+                                    arguments: {
+                                      'video': video,
+                                      'shotType': session.shotType,
+                                    },
                                   );
                                 },
                               );
@@ -192,7 +195,7 @@ class _SessionViewState extends State<SessionView> {
                                         videos[i]['raw_video_url'];
 
                                     var apiUrl =
-                                        'http://192.168.18.232:8000/?url=$rawVideoUrl&sessionId=$sessionId&videoName=$videoName&shotType=$shotType';
+                                        'http://192.168.18.60:8000/?url=$rawVideoUrl&sessionId=$sessionId&videoName=$videoName&shotType=$shotType';
                                     apiUrl = Uri.encodeFull(apiUrl);
 
                                     var response =
