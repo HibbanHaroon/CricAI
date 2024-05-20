@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:cricai/constants/colors.dart';
+import 'package:cricai/utilities/calculate_score.dart';
 import 'package:cricai/utilities/full_circle_painter.dart';
 import 'package:cricai/utilities/generics/get_arguments.dart';
+import 'package:cricai/views/components/deviation_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -159,317 +161,55 @@ class _ResultViewState extends State<ResultView> {
                     top: 14.0, left: 14.0, right: 14.0, bottom: 28.0),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  child: Column(
-                    children: [
-                      // Score
-                      Padding(
-                        padding: const EdgeInsets.only(top: 12.0),
-                        child: Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                  // Future Builder here
+                  child: FutureBuilder(
+                      future: getVideo(context),
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.done:
+                            video = snapshot.data as dynamic;
+                            Map<String, dynamic> feedback = video['feedback'];
+                            return Column(
                               children: [
-                                const Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 8.0,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        'Score : ',
-                                        style: TextStyle(
-                                          color: AppColors.darkTextColor,
-                                          fontFamily: 'SF Pro Display',
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 22,
-                                        ),
-                                      ),
-                                      Text(
-                                        '58 / 100',
-                                        style: TextStyle(
-                                          color: AppColors.darkTextColor,
-                                          fontFamily: 'SF Pro Display',
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.9,
-                                  height: 10,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 8.0,
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: const LinearProgressIndicator(
-                                        value: 58 / 100,
-                                        backgroundColor:
-                                            AppColors.lightPrimaryColor,
-                                        color: AppColors.primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                                // Score
+                                _buildScoreView(feedback),
+                                _buildAreasOfDeviationView(feedback),
+                                _buildOverallFeedbackView(feedback),
+                                // const Padding(
+                                //   padding: EdgeInsets.only(
+                                //     top: 20.0,
+                                //     left: 8.0,
+                                //   ),
+                                //   child: Row(
+                                //     children: [
+                                //       Column(
+                                //         crossAxisAlignment:
+                                //             CrossAxisAlignment.start,
+                                //         children: [
+                                //           Text(
+                                //             'Example Shot',
+                                //             style: TextStyle(
+                                //               color: AppColors.darkTextColor,
+                                //               fontFamily: 'SF Pro Display',
+                                //               fontWeight: FontWeight.w600,
+                                //               fontSize: 22,
+                                //             ),
+                                //           ),
+                                //           SizedBox(height: 12),
+                                //           VideoPlayer(
+                                //             id: 'i5v2YgHuTSE',
+                                //           ),
+                                //         ],
+                                //       )
+                                //     ],
+                                //   ),
+                                // ),
                               ],
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 20.0,
-                          left: 8.0,
-                        ),
-                        child: Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Areas of Deviation',
-                                  style: TextStyle(
-                                    color: AppColors.darkTextColor,
-                                    fontFamily: 'SF Pro Display',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 22,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 12.0),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                2.5,
-                                        height:
-                                            MediaQuery.of(context).size.height /
-                                                5,
-                                        decoration: BoxDecoration(
-                                          color: AppColors
-                                              .redMediumBackgroundColor,
-                                          border: Border.all(
-                                            color: AppColors.redColor,
-                                            width: 3,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(12.0),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  SizedBox(
-                                                    width: 75,
-                                                    child: Text(
-                                                      'Right Shoulder',
-                                                      style: TextStyle(
-                                                        color: AppColors
-                                                            .darkTextColor,
-                                                        fontFamily:
-                                                            'SF Pro Display',
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 16,
-                                                      ),
-                                                      softWrap: true,
-                                                    ),
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.end,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        'Deviation',
-                                                        style: TextStyle(
-                                                          color: AppColors
-                                                              .primaryColor,
-                                                          fontFamily:
-                                                              'SF Pro Display',
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          fontSize: 10,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        '84%',
-                                                        style: TextStyle(
-                                                          color: AppColors
-                                                              .redColor,
-                                                          fontFamily:
-                                                              'SF Pro Display',
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 22,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.2,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.1,
-                                                child: Image.asset(
-                                                  'assets/images/shoulder_right.png',
-                                                  fit: BoxFit
-                                                      .contain, // Adjust the fit as needed
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    top: 20.0,
-                                    left: 8.0,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Overall',
-                                            style: TextStyle(
-                                              color: AppColors.darkTextColor,
-                                              fontFamily: 'SF Pro Display',
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 22,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 12.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.85,
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .height *
-                                                      0.3,
-                                                  child: Stack(
-                                                    children: [
-                                                      // First, draw the SemiCirclePainter in the background
-                                                      Positioned(
-                                                        top: 56,
-                                                        left: 200,
-                                                        child: SizedBox(
-                                                          width: 30,
-                                                          height: 30,
-                                                          child: CustomPaint(
-                                                            painter:
-                                                                FullCirclePainter(),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      // Then, place the body image on top
-                                                      Positioned(
-                                                        top: 0,
-                                                        left: 0,
-                                                        child: Container(
-                                                          color: Colors
-                                                              .transparent, // Make background transparent
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.85,
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height *
-                                                              0.3,
-                                                          child: Image.asset(
-                                                            'assets/images/body.png',
-                                                            fit: BoxFit
-                                                                .contain, // Adjust the fit as needed
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.only(
-                                    top: 20.0,
-                                    left: 8.0,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Example Shot',
-                                            style: TextStyle(
-                                              color: AppColors.darkTextColor,
-                                              fontFamily: 'SF Pro Display',
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 22,
-                                            ),
-                                          ),
-                                          SizedBox(height: 12),
-                                          VideoPlayer(
-                                            id: 'i5v2YgHuTSE',
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                            );
+                          default:
+                            return const CircularProgressIndicator();
+                        }
+                      }),
                 ),
               ),
             ),
@@ -530,6 +270,325 @@ class _ResultViewState extends State<ResultView> {
     );
   }
 
+  // Feedback Widgets start from here.
+  Widget _buildScoreView(Map<String, dynamic> feedback) {
+    Map<String, int> scores = calculateScore(feedback);
+    final score = scores['score'] ?? 0;
+    final maxScore = scores['maxScore'] ?? 100;
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 8.0,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const Text(
+                      'Score : ',
+                      style: TextStyle(
+                        color: AppColors.darkTextColor,
+                        fontFamily: 'SF Pro Display',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 22,
+                      ),
+                    ),
+                    Text(
+                      '$score / $maxScore',
+                      style: const TextStyle(
+                        color: AppColors.darkTextColor,
+                        fontFamily: 'SF Pro Display',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: 10,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 8.0,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: LinearProgressIndicator(
+                      value: score / maxScore,
+                      backgroundColor: AppColors.lightPrimaryColor,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAreasOfDeviationView(Map<String, dynamic> feedback) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 20.0,
+        left: 8.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Areas of Deviation',
+            style: TextStyle(
+              color: AppColors.darkTextColor,
+              fontFamily: 'SF Pro Display',
+              fontWeight: FontWeight.w600,
+              fontSize: 22,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 12.0),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: List.generate(
+                  feedback.length,
+                  (index) {
+                    String angleName = feedback.keys.elementAt(index);
+                    int count = feedback[angleName]['count']!;
+                    int total = feedback[angleName]['total']!;
+                    int deviation = ((count / total) * 100).toInt();
+
+                    return DeviationCard(
+                      angleName: angleName,
+                      deviation: deviation,
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOverallFeedbackView(Map<String, dynamic> feedback) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 20.0,
+        left: 8.0,
+      ),
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Overall Feedback',
+                style: TextStyle(
+                  color: AppColors.darkTextColor,
+                  fontFamily: 'SF Pro Display',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 22,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      child: Stack(
+                        children: [
+                          // First, draw the SemiCirclePainter in the background
+                          // Right Shoulder
+                          _buildCircleDeviation(
+                            61,
+                            205,
+                            feedback["Right Shoulder"]["count"],
+                            feedback["Right Shoulder"]["total"],
+                            "right",
+                          ),
+                          // Left Shoulder
+                          _buildCircleDeviation(
+                            61,
+                            108,
+                            feedback["Left Shoulder"]["count"],
+                            feedback["Left Shoulder"]["total"],
+                            "left",
+                          ),
+                          // Right Elbow
+                          _buildCircleDeviation(
+                            95,
+                            215,
+                            feedback["Right Elbow"]["count"],
+                            feedback["Right Elbow"]["total"],
+                            "right",
+                          ),
+                          // Left Elbow
+                          _buildCircleDeviation(
+                            95,
+                            99,
+                            feedback["Left Elbow"]["count"],
+                            feedback["Left Elbow"]["total"],
+                            "left",
+                          ),
+                          // Right Wrist
+                          _buildCircleDeviation(
+                            126,
+                            222,
+                            feedback["Right Wrist"]["count"],
+                            feedback["Right Wrist"]["total"],
+                            "right",
+                          ),
+                          // Left Wrist
+                          _buildCircleDeviation(
+                            124,
+                            91,
+                            feedback["Left Wrist"]["count"],
+                            feedback["Left Wrist"]["total"],
+                            "left",
+                          ),
+                          // Right Hip
+                          _buildCircleDeviation(
+                            140,
+                            183,
+                            feedback["Right Hip"]["count"],
+                            feedback["Right Hip"]["total"],
+                            "rightDown",
+                          ),
+                          // Left Hip
+                          _buildCircleDeviation(
+                            140,
+                            129,
+                            feedback["Left Hip"]["count"],
+                            feedback["Left Hip"]["total"],
+                            "leftDown",
+                          ),
+                          // Right Knee
+                          _buildCircleDeviation(
+                            183,
+                            185,
+                            feedback["Right Knee"]["count"],
+                            feedback["Right Knee"]["total"],
+                            "right",
+                          ),
+                          // Left Knee
+                          _buildCircleDeviation(
+                            183,
+                            128,
+                            feedback["Left Knee"]["count"],
+                            feedback["Left Knee"]["total"],
+                            "left",
+                          ),
+                          // Right Ankle
+                          _buildCircleDeviation(
+                            228,
+                            184,
+                            feedback["Right Ankle"]["count"],
+                            feedback["Right Ankle"]["total"],
+                            "right",
+                          ),
+                          // Left Ankle
+                          _buildCircleDeviation(
+                            228,
+                            128,
+                            feedback["Left Ankle"]["count"],
+                            feedback["Left Ankle"]["total"],
+                            "left",
+                          ),
+                          // Then, place the body image on top
+                          Positioned(
+                            top: 0,
+                            left: 0,
+                            child: Container(
+                              color: Colors
+                                  .transparent, // Make background transparent
+                              width: MediaQuery.of(context).size.width * 0.85,
+                              height: MediaQuery.of(context).size.height * 0.3,
+                              child: Image.asset(
+                                'assets/images/body.png',
+                                fit: BoxFit.contain, // Adjust the fit as needed
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCircleDeviation(
+      double top, double left, int count, int total, String textSide) {
+    int deviation = ((count / total) * 100).toInt();
+    Color textColor = deviation > 70 && deviation <= 100
+        ? AppColors.redColor
+        : AppColors.darkTextColor;
+    return Stack(
+      children: [
+        if (textSide == 'rightDown' || textSide == 'right')
+          Positioned(
+            top: textSide == 'rightDown' ? top + 21 : top,
+            left: textSide == 'rightDown' ? left + 25 : left + 28,
+            child: Text(
+              '$deviation%',
+              style: TextStyle(
+                color: textColor,
+                fontFamily: 'SF Pro Display',
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        Positioned(
+          top: top,
+          left: left,
+          child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CustomPaint(
+              painter: FullCirclePainter(),
+            ),
+          ),
+        ),
+        if (textSide == 'leftDown' || textSide == 'left')
+          Positioned(
+            top: textSide == 'leftDown' ? top + 21 : top,
+            left: textSide == 'leftDown' ? left - 22 : left - 35,
+            child: Text(
+              '$deviation%',
+              style: TextStyle(
+                color: textColor,
+                fontFamily: 'SF Pro Display',
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  // Build function for Example Shot
+
+  // Analysis Widgets start from here.
   Widget _buildAnalysisView(anglesArray) {
     if (anglesArray == null ||
         anglesArray[(currentFrame - 1).toString()] == null) {
