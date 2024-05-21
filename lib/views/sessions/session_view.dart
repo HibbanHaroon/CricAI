@@ -7,6 +7,7 @@ import 'package:cricai/services/cloud/sessions/cloud_session.dart';
 import 'package:cricai/views/components/video_card.dart';
 import 'package:cricai/utilities/generics/get_arguments.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 
 class SessionView extends StatefulWidget {
@@ -34,6 +35,7 @@ Future<List<dynamic>> getVideos(BuildContext context) async {
 class _SessionViewState extends State<SessionView> {
   late final FirebaseCloudStorage _sessionsService;
   late bool _isGenerationDisabled;
+  late bool _isGenerating;
   late List<dynamic> videos;
   late CloudSession session;
 
@@ -41,6 +43,7 @@ class _SessionViewState extends State<SessionView> {
   void initState() {
     _sessionsService = FirebaseCloudStorage();
     _isGenerationDisabled = true;
+    _isGenerating = false;
 
     videos = [];
 
@@ -182,11 +185,14 @@ class _SessionViewState extends State<SessionView> {
                     valueListenable: sessionVideos,
                     builder: (context, videos, child) {
                       isGenerationNeeded(videos);
-                      return ElevatedButton(
+                      return ElevatedButton.icon(
                         onPressed: _isGenerationDisabled
                             ? null
                             : () async {
                                 if (_isGenerationDisabled == false) {
+                                  setState(() {
+                                    _isGenerating = true;
+                                  });
                                   for (var i = 0; i < videos.length; i++) {
                                     var sessionId = session.documentId;
                                     var shotType = session.shotType;
@@ -195,7 +201,7 @@ class _SessionViewState extends State<SessionView> {
                                         videos[i]['raw_video_url'];
 
                                     var apiUrl =
-                                        'http://192.168.18.60:8000/?url=$rawVideoUrl&sessionId=$sessionId&videoName=$videoName&shotType=$shotType';
+                                        'http://10.1.110.111:8000/?url=$rawVideoUrl&sessionId=$sessionId&videoName=$videoName&shotType=$shotType';
                                     apiUrl = Uri.encodeFull(apiUrl);
 
                                     var response =
@@ -229,6 +235,10 @@ class _SessionViewState extends State<SessionView> {
                                     shotType: session.shotType,
                                     videos: videos,
                                   );
+
+                                  setState(() {
+                                    _isGenerating = false;
+                                  });
                                 }
                               },
                         style: TextButton.styleFrom(
@@ -240,9 +250,24 @@ class _SessionViewState extends State<SessionView> {
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                         ),
-                        child: const Text(
-                          'Generate Analysis',
-                          style: TextStyle(
+                        icon: _isGenerating
+                            ? Container(
+                                width: 24,
+                                height: 24,
+                                padding: const EdgeInsets.all(2.0),
+                                child: const CircularProgressIndicator(
+                                  color: AppColors.lightTextColor,
+                                  strokeWidth: 3,
+                                ),
+                              )
+                            : const FaIcon(
+                                FontAwesomeIcons.chartSimple,
+                                size: 24,
+                                color: AppColors.lightTextColor,
+                              ),
+                        label: Text(
+                          _isGenerating ? 'Generating...' : 'Generate Analysis',
+                          style: const TextStyle(
                             fontFamily: 'SF Pro Display',
                             fontStyle: FontStyle.normal,
                             fontWeight: FontWeight.w700,

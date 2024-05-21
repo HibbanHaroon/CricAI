@@ -39,7 +39,7 @@ class _DeviationCardState extends State<DeviationCard> {
     return Padding(
       padding: const EdgeInsets.only(right: 14.0),
       child: Container(
-        width: MediaQuery.of(context).size.width / 2.5,
+        width: MediaQuery.of(context).size.width / 2.3,
         height: MediaQuery.of(context).size.height / 5,
         decoration: BoxDecoration(
           color: color,
