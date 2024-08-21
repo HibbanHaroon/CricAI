@@ -1,0 +1,1 @@
+const List<String> userTypes = <String>['Player', 'Coach'];

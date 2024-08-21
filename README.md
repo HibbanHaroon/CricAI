@@ -7,46 +7,65 @@ CricAI is an Industrial project for an emerging startup named enGenAIr, funded b
 A complete mobile based solution for cricket training, aiming to minimize errors by providing AI-driven feedback and analysis to coaches and players which will save valuable time and efforts.
 
 ## Features:
+
 1. **User Authentication**
+
 - Login
 - Register
 - Forgot Password
 - Verify Email
 - New Password
+
 2. **Upload Video**
 3. **Record Video**
 4. **Generate analysis**
 5. **View Result**
 6. **Session Management**
+
 - Create Session
 - Update Session
 - Remove Session
 - View All Sessions
+
 7. **Player Management**
+
 - Add Player
 - Remove Player
 - View All players
+
 8. **User Management**
+
 - Remove User
+
 9. **Backend Management**
+
 - Add Ideal Player Data
 - Remove Ideal Player Data
 
 ## Tech Stack
+
 - **Flutter** - for mobile development of CricAI application having coach and player as users
-- **Firebase** - for integration of *Firebase Authentication*, *Firestore* for sessions collection and players collection, and *Firebase Storage* for storing videos
+- **Firebase** - for integration of _Firebase Authentication_, _Firestore_ for sessions collection and players collection, and _Firebase Storage_ for storing videos
 - **Python** - for the development of core features, Pose Estimation and Shot Comparison, and Shot Classification Classifier
 - **Mediapipe Library** - for extracting landmarks of the body of a player
 - **FastAPI** - for the development of Pose Estimation, Shot Comparison, and Shot Classification APIs and integrating them in the mobile application to generate analysis.
 
 ## Design
+
 ### Use Case Diagram :
+
 ![Use Case Diagram](https://github.com/HibbanHaroon/CricAI/blob/assets/Diagrams/Use%20Case%20Diagram.png)
+
 ### Architecture Diagram:
+
 ![Architecture Diagram](https://github.com/HibbanHaroon/CricAI/blob/assets/Diagrams/Architecture%20Diagram.jpg)
+
 ### Work Breakdown Structure:
+
 ![Work Breakdown Structure](https://github.com/HibbanHaroon/CricAI/blob/assets/Diagrams/Work%20Breakdown%20Structure.jpg)
+
 ### Figma Prototype
+
 [Figma Link](https://www.figma.com/file/wqdUByLf3qINwzOxqnFv3D/CricAI-Prototype?type=design&node-id=0%3A1&mode=design&t=eIUN5muog8xDmiIw-1)
 
 1. **Splash Screen**
@@ -84,4 +103,3 @@ A complete mobile based solution for cricket training, aiming to minimize errors
 
 12. **View Result Screen**
     ![View Result Screen](https://github.com/HibbanHaroon/CricAI/blob/assets/Figma%20Prototype/View%20Result.png)
-

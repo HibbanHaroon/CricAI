@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyBjyCqyiZ3P_nLdZfpQ7DGCa2f-TIRdTJk</string>
+	<key>GCM_SENDER_ID</key>
+	<string>907088051833</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.cricai.RunnerTests</string>
+	<key>PROJECT_ID</key>
+	<string>cricai-001</string>
+	<key>STORAGE_BUCKET</key>
+	<string>cricai-001.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:907088051833:ios:931a1ce781816ed639dea8</string>
+</dict>
+</plist>
